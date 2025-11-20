@@ -70,7 +70,7 @@ public class Dijkstra
         paths.Add(bestPath);
 
 
-        recursif(paths, startNode);
+        //recursif(paths, startNode);
 
         List<DijkstraLink> links = startNode.GetNearestLinksOrder().ToList();
 
@@ -97,21 +97,21 @@ public class Dijkstra
 
 
 
-        if (node == endNode)
-        {
-            return;
-        }
+        //if (node == endNode)
+        //{
+        //    return;
+        //}
 
-        DijkstraLink[] links = node.GetNearestLinksOrder();
+        //DijkstraLink[] links = node.GetNearestLinksOrder();
 
-        for (int i = 0; i < links.Length; i++)
-        {
-            if (links[i])
-            {
-            }
+        //for (int i = 0; i < links.Length; i++)
+        //{
+        //    if (links[i])
+        //    {
+        //    }
 
-            if (link.value) { }
-        }
+        //    if (link.value) { }
+        //}
     }
     public void AddValueToLinks(DijkstraLink[] links, int value)
     {
