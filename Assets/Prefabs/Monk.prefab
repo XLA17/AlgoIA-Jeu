@@ -44,6 +44,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Monk_sprite
       objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 8a71865badd4a4547baddbb6f8176262, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 8a71865badd4a4547baddbb6f8176262, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 2006125973
+      objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8a71865badd4a4547baddbb6f8176262, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

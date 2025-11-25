@@ -1,123 +1,112 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
-public class DijkstraPath
-{
-    public List<DijkstraNode> nodes;
-    public int value;
+//public class DijkstraPath
+//{
+//    public List<DijkstraNode> nodes;
+//    public int value;
 
-    public DijkstraPath(List<DijkstraNode> nodes, int value)
-    {
-        this.nodes = nodes;
-        this.value = value;
-    }
-}
+//    public DijkstraPath(List<DijkstraNode> nodes, int value)
+//    {
+//        this.nodes = nodes;
+//        this.value = value;
+//    }
+//}
 
-public class DijkstraNode
-{
-    private GameObject gameObject;
-    private DijkstraLink[] links;
+//[System.Serializable]
+//public class DijkstraNode
+//{
+//    private string name;
+//    private GameObject gameObject;
 
-    public DijkstraNode(GameObject gameObject, DijkstraLink[] links)
-    {
-        this.gameObject = gameObject;
-        this.links = links;
-    }
+//    public DijkstraNode(string name, GameObject gameObject)
+//    {
+//        this.name = name;
+//        this.gameObject = gameObject;
+//    }
 
-    public DijkstraLink[] GetNearestLinksOrder(int value = 0)
-    {
-        return links.OrderBy(l => l.value).ToArray();
-    }
-}
+//    public override bool Equals(object? obj)
+//    {
+//        return obj is DijkstraNode n && name == n.name && gameObject == n.gameObject;
+//    }
 
-public class DijkstraLink
-{
-    public DijkstraNode endNode;
-    public int value;
-
-    public DijkstraLink(DijkstraNode endNode, int value)
-    {
-        this.endNode = endNode;
-        this.value = value;
-    }
-}
+//    public override int GetHashCode() => HashCode.Combine(name, gameObject);
+//}
 
 public class Dijkstra
 {
-    private DijkstraNode[] nodes;
-    private DijkstraNode startNode;
-    private DijkstraNode endNode;
-
-    public Dijkstra(DijkstraNode[] nodes, DijkstraNode startNode, DijkstraNode endNode)
+    public static (Dictionary<GameObject, float> dist, Dictionary<GameObject, GameObject> parent)
+        Compute(Dictionary<GameObject, Dictionary<GameObject, float>> graph, GameObject start, GameObject target = null)
     {
-        this.nodes = nodes;
-        this.startNode = startNode;
-        this.endNode = endNode;
-    }
+        var dist = new Dictionary<GameObject, float>();
+        var parent = new Dictionary<GameObject, GameObject>();
 
-    public void Resolution()
-    {
-        int totalValue = int.MaxValue;
-        DijkstraPath bestPath = new DijkstraPath(new List<DijkstraNode>(), 0);
-        bestPath.nodes.Add(startNode);
-
-        List<DijkstraPath> paths = new List<DijkstraPath>();
-        paths.Add(bestPath);
-
-
-        //recursif(paths, startNode);
-
-        List<DijkstraLink> links = startNode.GetNearestLinksOrder().ToList();
-
-        DijkstraLink link = links[0];
-
-        totalValue += links[0].value;
-
-        DijkstraLink[] newLinks = link.endNode.GetNearestLinksOrder().ToArray();
-        AddValueToLinks(newLinks, totalValue);
-        links.AddRange(newLinks);
-    }
-
-    private void recursif(List<DijkstraPath> paths)
-    {
-        for (int i = 0; i < paths.Count; i++)
+        // initialisation
+        foreach (var node in graph.Keys)
         {
-            if (paths[i].nodes[^1] == endNode)
+            dist[node] = float.MaxValue;
+            parent[node] = null;
+        }
+
+        dist[start] = 0;
+
+        // SortedSet pour simuler un tas
+        var pq = new SortedSet<(float dist, GameObject node)>(Comparer<(float, GameObject)>.Create((a, b) =>
+        {
+            int cmp = a.Item1.CompareTo(b.Item1);
+            if (cmp == 0) return a.Item2.name.CompareTo(b.Item2.name);
+            return cmp;
+        }));
+
+        pq.Add((0, start));
+
+        while (pq.Count > 0)
+        {
+            var first = pq.Min;
+            pq.Remove(first);
+
+            float currentDist = first.dist;
+            GameObject node = first.node;
+
+            if (target != null && node == target)
+                break;
+
+            if (currentDist > dist[node])
+                continue;
+
+            foreach (var kv in graph[node])
             {
-                return;
+                GameObject neighbor = kv.Key;
+                float weight = kv.Value;
+                float newDist = currentDist + weight;
+
+                if (newDist < dist[neighbor])
+                {
+                    // supprime l'ancien si présent
+                    pq.Remove((dist[neighbor], neighbor));
+
+                    dist[neighbor] = newDist;
+                    parent[neighbor] = node;
+                    pq.Add((newDist, neighbor));
+                }
             }
         }
 
-
-
-
-
-        //if (node == endNode)
-        //{
-        //    return;
-        //}
-
-        //DijkstraLink[] links = node.GetNearestLinksOrder();
-
-        //for (int i = 0; i < links.Length; i++)
-        //{
-        //    if (links[i])
-        //    {
-        //    }
-
-        //    if (link.value) { }
-        //}
+        return (dist, parent);
     }
-    public void AddValueToLinks(DijkstraLink[] links, int value)
+
+    public static List<GameObject> GetPath(Dictionary<GameObject, GameObject> parent, GameObject target)
     {
-        foreach (var l in links)
+        var path = new List<GameObject>();
+        GameObject current = target;
+        while (current != null)
         {
-            l.value += value;
+            path.Add(current);
+            current = parent[current];
         }
+        path.Reverse();
+        return path;
     }
 }

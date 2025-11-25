@@ -45,8 +45,16 @@ PrefabInstance:
       value: Lancer_sprite
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 27d377e4459150f468317e433ccf1c39, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 27d377e4459150f468317e433ccf1c39, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 27d377e4459150f468317e433ccf1c39, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 2006125973
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 27d377e4459150f468317e433ccf1c39, type: 3}
       propertyPath: m_LocalPosition.x

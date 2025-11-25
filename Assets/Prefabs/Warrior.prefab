@@ -45,8 +45,16 @@ PrefabInstance:
       value: Warrior_sprite
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 615cd347e26517740b16847bf163aabe, type: 3}
+      propertyPath: m_SortingLayer
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 615cd347e26517740b16847bf163aabe, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3626916397498700004, guid: 615cd347e26517740b16847bf163aabe, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 2006125973
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 615cd347e26517740b16847bf163aabe, type: 3}
       propertyPath: m_LocalPosition.x
