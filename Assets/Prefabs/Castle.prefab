@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6419724066065303650}
   - component: {fileID: 6391185503628420}
+  - component: {fileID: 4137695823060068924}
+  - component: {fileID: 5922897949857009844}
   m_Layer: 0
   m_Name: Castle
   m_TagString: Untagged
@@ -90,6 +92,33 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &4137695823060068924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4421301976112230593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d352984cf79b0544ca37732d9ac6c613, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nextTowers: []
+  value: 0
+--- !u!114 &5922897949857009844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4421301976112230593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0786d4817a4db49499204d260e84257e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 0
 --- !u!1001 &2720138950844927339
 PrefabInstance:
   m_ObjectHideFlags: 0
