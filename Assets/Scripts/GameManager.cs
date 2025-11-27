@@ -40,6 +40,7 @@ public class GameManager : MonoBehaviour
         //TestDijkstra();
         var (dist, parent) = Dijkstra.Compute(graph, spawns[0], endNode);
         var path = Dijkstra.GetPath(parent, endNode);
+        path.RemoveAt(0);
         unitScript.SetTargets(path);
     }
 

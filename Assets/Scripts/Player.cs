@@ -10,14 +10,14 @@ public class Player : MonoBehaviour
 
 
     private GameObject spawn;
-    private List<GameObject> targets;
+    private List<GameObject> m_targets = new();
     private GameObject currentTarget;
     private bool canAttack = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        targets = new List<GameObject>();
+
     }
 
     // Update is called once per frame
@@ -48,10 +48,10 @@ public class Player : MonoBehaviour
             if (dist < 1)
             {
                 Attack(currentTarget);
+            } else
+            {
+                Move();
             }
-
-            // move tmp
-            Move();
         }
 
     }
@@ -63,15 +63,15 @@ public class Player : MonoBehaviour
 
     public void SetTargets(List<GameObject> targets)
     {
-        this.targets = targets;
+        m_targets = targets;
 
-        this.currentTarget = targets[0];
+        currentTarget = targets[0];
     }
 
     private void Move()
     {
         Vector3 dir = Vector3.Normalize(currentTarget.transform.position - transform.position);
-        transform.position += dir * Time.deltaTime;
+        transform.position += dir * Time.deltaTime * 5;
     }
 
     public void Attack(GameObject defense)
@@ -82,20 +82,22 @@ public class Player : MonoBehaviour
             return;
         }
 
-        canAttack = false;
-        defenseScript.TakeDamage(damageDealt);
-        if (defenseScript.IsDead())
+        if (canAttack)
         {
-            ChangeTarget();
+            canAttack = false;
+            StartCoroutine(DelayBetweenAttacks());
+            defenseScript.TakeDamage(damageDealt);
+            if (defenseScript.IsDead())
+            {
+                ChangeTarget();
+            }
         }
-
-        StartCoroutine(DelayBetweenAttacks());
     }
 
     void ChangeTarget()
     {
-        targets.RemoveAt(0);
-        currentTarget = targets.Count > 0 ? targets[0] : null;
+        m_targets.RemoveAt(0);
+        currentTarget = m_targets.Count > 0 ? m_targets[0] : null;
         Debug.Log($"change target : {currentTarget}");
     }
 
