@@ -103,16 +103,6 @@ public class AStar
         }
     }
 
-    public static void Test(Tilemap[] tilemaps)
-    {
-        var list = Compute(tilemaps, new Vector2(-35, -19), new Vector2(-21, -5));
-        //List<Vector2> list = Compute(startPosition, graphWidth, graphHeight, startIndex, endIndex);
-        //PrintList(list);
-
-        Debug.Log("test");
-
-    }
-
     public static KeyValuePair<Vector2, TileInfos> GetMinValueEntry(Dictionary<Vector2, TileInfos> dictionary)
     {
         var minEntry = new KeyValuePair<Vector2, TileInfos>(default, new TileInfos(null, int.MaxValue));
@@ -130,7 +120,7 @@ public class AStar
         return minEntry;
     }
 
-    public static (List<TileInfos>, Dictionary<Vector2, TileInfos>, Dictionary<Vector2, TileInfos>) Compute(Tilemap[] tilemaps, Vector2 startPosition, Vector2 endPosition)
+    public static List<TileInfos> Compute(Tilemap[] tilemaps, Vector2 startPosition, Vector2 endPosition)
     {
         var closedList = new Dictionary<Vector2, TileInfos>();
         var openList = new Dictionary<Vector2, TileInfos>();
@@ -146,10 +136,10 @@ public class AStar
             if (current.Key == endPosition)
             {
                 closedList[current.Key] = current.Value;
-                return (ReconstructPath(closedList, endPosition), closedList, openList);
+                return ReconstructPath(closedList, endPosition);
             }
 
-            List<Vector2> neighborsPos = GetNeighborsIndex(current.Key);
+            List<Vector2> neighborsPos = GetNeighbors(current.Key);
 
             foreach (Vector2 neighborPos in neighborsPos)
             {
@@ -176,6 +166,10 @@ public class AStar
 
     public static bool HasTile(Tilemap[] tilemaps, Vector3Int position)
     {
+        if (tilemaps == null)
+        {
+            return false;
+        }
         bool res = false;
         foreach (var tilemap in tilemaps)
         {
@@ -194,9 +188,7 @@ public class AStar
 
         while (current.parent != null)
         {
-            Debug.Log("test");
             path.Add(current);
-            //closedList.TryGetValue(current, out TileInfos tileInfosValue);
             current = closedList[current.parent.Value];
         }
 
@@ -209,13 +201,15 @@ public class AStar
         return Mathf.Max(Mathf.Abs(pos1.x - pos2.x), Mathf.Abs(pos1.y - pos2.y));
     }
 
-    private static List<Vector2> GetNeighborsIndex(Vector2 position)
+    private static List<Vector2> GetNeighbors(Vector2 position)
     {
         List<Vector2> neighbors = new();
-        int[] dx = { -1, 0, 1, -1, 1, -1, 0, 1 };
-        int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
+        //int[] dx = { -1, 0, 1, -1, 1, -1, 0, 1 };
+        //int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
+        int[] dx = { 0, 0, -1, 1 };
+        int[] dy = { -1, 1, 0, 0 };
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 4; i++)
         {
             float nx = position.x + dx[i];
             float ny = position.y + dy[i];

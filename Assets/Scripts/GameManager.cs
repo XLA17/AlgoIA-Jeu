@@ -17,8 +17,6 @@ public class GameManager : MonoBehaviour
 
     private static Dictionary<GameObject, Dictionary<GameObject, float>> graph;
     private List<TileInfos> list;
-    private Dictionary<Vector2, TileInfos> closedList;
-    private Dictionary<Vector2, TileInfos> openList;
 
     void Awake()
     {
@@ -37,8 +35,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         list = new List<TileInfos>();
-        openList = new Dictionary<Vector2, TileInfos>();
-        closedList = new Dictionary<Vector2, TileInfos>();
 
         GameObject unit = Instantiate(unitPrefab, spawns[0].transform);
         if (!unit.TryGetComponent(out Player unitScript))
@@ -52,12 +48,8 @@ public class GameManager : MonoBehaviour
         var (dist, parent) = Dijkstra.Compute(graph, spawns[0], endNode);
         var path = Dijkstra.GetPath(parent, endNode);
         path.RemoveAt(0);
+        unitScript.SetTilemaps(tilemaps);
         unitScript.SetTargets(path);
-
-
-        (list, closedList, openList) = AStar.Compute(tilemaps, new Vector2(-35, -19), new Vector2(-21, -5));
-
-
     }
 
     // Update is called once per frame
@@ -111,33 +103,5 @@ public class GameManager : MonoBehaviour
             // Afficher le texte au milieu
             Handles.Label(midPoint, list[i].value.ToString());
         }
-
-        if (closedList == null)
-            return;
-
-        //Gizmos.color = Color.red; // Couleur des carrés
-
-        //foreach (KeyValuePair<Vector2, TileInfos> entry in closedList)
-        //{
-        //    // Convertir Vector2 en Vector3 pour Gizmos.DrawCube
-        //    Vector3 position = new Vector3(entry.Key.x + 0.5f, entry.Key.y + 0.5f, 0);
-
-        //    // Dessiner un cube (carré en 2D) de taille 1.1x1.1
-        //    Gizmos.DrawCube(position, new Vector3(1.1f, 1.1f, 0.1f));
-        //}
-
-        //if (openList == null)
-        //    return;
-
-        //Gizmos.color = Color.blue; // Couleur des carrés
-
-        //foreach (KeyValuePair<Vector2, TileInfos> entry in openList)
-        //{
-        //    // Convertir Vector2 en Vector3 pour Gizmos.DrawCube
-        //    Vector3 position = new Vector3(entry.Key.x + 0.5f, entry.Key.y + 0.5f, 0);
-
-        //    // Dessiner un cube (carré en 2D) de taille 1.1x1.1
-        //    Gizmos.DrawCube(position, new Vector3(1.1f, 1.1f, 0.1f));
-        //}
     }
 }
