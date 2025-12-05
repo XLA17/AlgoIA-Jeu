@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     [SerializeField] private int damageDealt;
     [SerializeField] private float delayBetweenAttacks;
 
+    private Animator animator;
     private Tilemap[] tilemaps;
     private GameObject spawn;
     private List<GameObject> m_targets = new();
@@ -19,38 +20,22 @@ public class Player : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        animator = transform.GetChild(0).GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.A))
-        //{
-        //    transform.Translate(new Vector3(-1, 0, 0));
-        //}
-        //if (Input.GetKeyDown(KeyCode.D))
-        //{
-        //    transform.Translate(new Vector3(1, 0, 0));
-        //}
-        //if (Input.GetKeyDown(KeyCode.Z))
-        //{
-        //    transform.Translate(new Vector3(0, 1, 0));
-        //}
-        //if (Input.GetKeyDown(KeyCode.S))
-        //{
-        //    transform.Translate(new Vector3(0, -1, 0));
-        //}
-
-        //StartCoroutine(MoveUnits());
-
         if (currentTarget != null)
         {
             float dist = Vector3.Distance(currentTarget.transform.position, transform.position);
             if (dist < 2)
             {
+                animator.SetBool("isMoving", false);
                 Attack(currentTarget);
             } else
             {
+                animator.SetBool("isMoving", true);
                 Debug.Log("count: " + movementPath.Count);
                 if (movementPath.Count > 0)
                 {
@@ -79,23 +64,16 @@ public class Player : MonoBehaviour
         this.tilemaps = tilemaps;
     }
 
-    private void Move()
-    {
-        MoveUnits();
-        Vector3 dir = Vector3.Normalize(new Vector3(movementPath[0].parent.Value.x - transform.position.x, movementPath[0].parent.Value.y - transform.position.y, 0));
-        transform.position += dir * Time.deltaTime *5;
-    }
-
     public void Attack(GameObject defense)
     {
         if (!defense.TryGetComponent(out Defense defenseScript)) 
         {
-            //Debug.LogError($"Attack impossible! {defense} is not a defense.");
             return;
         }
 
         if (canAttack)
         {
+            animator.Play("Attack");
             canAttack = false;
             StartCoroutine(DelayBetweenAttacks());
             defenseScript.TakeDamage(damageDealt);
@@ -146,15 +124,5 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(delayBetweenAttacks);
         canAttack = true;
-    }
-
-    IEnumerator MoveUnits()
-    {
-        while (currentTarget != null)
-        {
-
-
-            yield return new WaitForSeconds(1);
-        }
     }
 }
