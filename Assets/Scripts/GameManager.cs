@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -12,11 +13,20 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject unitsParent;
     [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Tilemap[] tilemaps;
+    [SerializeField] private TextMeshProUGUI unitsCount_UI;
+    [SerializeField] private GameObject canva_UI;
+
+    [SerializeField] private int unitsCount;
 
     public static GameManager Instance;
 
     private static Dictionary<GameObject, Dictionary<GameObject, float>> graph;
     private List<TileInfos> list;
+
+    private int remainingUnits;
+    private int leftSpawnUnitsCount;
+    private int centerSpawnUnitsCount;
+    private int rightSpawnUnitsCount;
 
     void Awake()
     {
@@ -31,9 +41,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Start()
     {
+        unitsCount_UI.text = unitsCount.ToString() + "/" + unitsCount.ToString();
+        remainingUnits = unitsCount;
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public void StartGame()
+    {
+        canva_UI.SetActive(false);
+
         list = new List<TileInfos>();
 
         GameObject unit = Instantiate(unitPrefab, spawns[0].transform);
@@ -45,7 +63,7 @@ public class GameManager : MonoBehaviour
         unit.transform.SetParent(unitsParent.transform);
         SetGraph();
         //TestDijkstra();
-        var (dist, parent) = Dijkstra.Compute(graph, spawns[0], endNode);
+        var (dist, parent) = Dijkstra.Compute(graph, spawns[0]);
         var path = Dijkstra.GetPath(parent, endNode);
         path.RemoveAt(0);
         unitScript.SetTilemaps(tilemaps);
@@ -102,6 +120,32 @@ public class GameManager : MonoBehaviour
 
             // Afficher le texte au milieu
             Handles.Label(midPoint, list[i].value.ToString());
+        }
+    }
+
+    public void ClickOnUnitsChoiceUI(GameObject o)
+    {
+        o.transform.Rotate(0, 0, 180f);
+    }
+
+    public void AddUnitToSpawn(TextMeshProUGUI unitsCountSpawn_UI)
+    {
+        if (remainingUnits > 0)
+        {
+            unitsCountSpawn_UI.text = (int.Parse(unitsCountSpawn_UI.text) + 1).ToString();
+            remainingUnits--;
+            unitsCount_UI.text = remainingUnits.ToString() + "/" + unitsCount.ToString();
+        }
+    }
+
+    public void RemoveUnitToSpawn(TextMeshProUGUI unitsCountSpawn_UI)
+    {
+        int unitsNb = int.Parse(unitsCountSpawn_UI.text);
+        if (unitsNb > 0)
+        {
+            unitsCountSpawn_UI.text = (unitsNb - 1).ToString();
+            remainingUnits++;
+            unitsCount_UI.text = remainingUnits.ToString() + "/" + unitsCount.ToString();
         }
     }
 }

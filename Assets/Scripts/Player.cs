@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
@@ -10,6 +11,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float delayBetweenAttacks;
 
     private Animator animator;
+    private LancerAnimationHandler animationHandler;
     private Tilemap[] tilemaps;
     private GameObject spawn;
     private List<GameObject> m_targets = new();
@@ -21,12 +23,15 @@ public class Player : MonoBehaviour
     void Start()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();
+        animationHandler = transform.GetChild(0).GetComponent<LancerAnimationHandler>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (currentTarget != null)
+        canAttack = !animationHandler.attackAnimationIsPlaying;
+
+        if (currentTarget != null && canAttack)
         {
             float dist = Vector3.Distance(currentTarget.transform.position, transform.position);
             if (dist < 2)
@@ -36,7 +41,6 @@ public class Player : MonoBehaviour
             } else
             {
                 animator.SetBool("isMoving", true);
-                Debug.Log("count: " + movementPath.Count);
                 if (movementPath.Count > 0)
                 {
                     MoveUnitTo(movementPath[0].parent.Value + new Vector2(0.5f, 0.5f));
@@ -75,7 +79,6 @@ public class Player : MonoBehaviour
         {
             animator.Play("Attack");
             canAttack = false;
-            StartCoroutine(DelayBetweenAttacks());
             defenseScript.TakeDamage(damageDealt);
             if (defenseScript.IsDead())
             {
@@ -120,9 +123,8 @@ public class Player : MonoBehaviour
 
     }
 
-    IEnumerator DelayBetweenAttacks()
+    public void AttackAnimationFinished()
     {
-        yield return new WaitForSeconds(delayBetweenAttacks);
         canAttack = true;
     }
 }

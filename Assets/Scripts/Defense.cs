@@ -1,8 +1,11 @@
+using TMPro;
 using UnityEngine;
 
 public class Defense : MonoBehaviour
 {
     [SerializeField] private int maxHealth;
+    [SerializeField] private TextMeshPro health_UI;
+    [SerializeField] private GameObject deadTowerPrefab;
 
     private int health;
     private bool isDead = false;
@@ -11,12 +14,13 @@ public class Defense : MonoBehaviour
     void Start()
     {
         health = maxHealth;
+        health_UI.text = health.ToString();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void TakeDamage(int damage)
@@ -30,8 +34,12 @@ public class Defense : MonoBehaviour
         {
             health = 0;
             isDead = true;
+
+            Instantiate(deadTowerPrefab, gameObject.transform.position, Quaternion.identity);
             gameObject.SetActive(false);
         }
+
+        health_UI.text = health.ToString();
     }
 
     public bool IsDead()
