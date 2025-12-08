@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
     private List<TileInfos> list;
 
     private int remainingUnits;
+    private List<Boid> boids;
 
     void Awake()
     {
@@ -50,6 +52,8 @@ public class GameManager : MonoBehaviour
     {
         unitsCount_UI.text = unitsCount.ToString() + "/" + unitsCount.ToString();
         remainingUnits = unitsCount;
+
+        boids = new List<Boid>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -67,7 +71,7 @@ public class GameManager : MonoBehaviour
 
             for (int i = 0; i < s.unitsCount; i++)
             {
-                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform);
+                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle, Quaternion.identity);
                 if (!unit.TryGetComponent(out Player unitScript))
                 {
                     Debug.LogError($"{unitPrefab} doesn't have a Player script.");
@@ -78,6 +82,14 @@ public class GameManager : MonoBehaviour
                 path.RemoveAt(0);
                 unitScript.SetTilemaps(tilemaps);
                 unitScript.SetTargets(path);
+
+
+
+                if (i != 0)
+                {
+                    boids.Add(new Boid(s.gameObject.transform.position));
+                }
+                boids.Add(new Boid(s.gameObject.transform.position));
             }
         }
     }
@@ -85,7 +97,24 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        foreach (Boid boid in boids)
+        {
+            List<Boid> closeBoids = new();
+
+            foreach (Boid otherBoid in boids)
+            {
+                if (otherBoid == boid) continue;
+                float distance = boid.Distance(otherBoid);
+                if (distance < 200)
+                {
+                    closeBoids.Add(otherBoid);
+                }
+            }
+
+            boid.MoveCloser(closeBoids);
+            boid.MoveWith(closeBoids);
+            boid.MoveAway(closeBoids, 20);
+        }
     }
 
     void SetGraph()
