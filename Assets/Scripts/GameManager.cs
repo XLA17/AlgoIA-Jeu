@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TMPro;
@@ -7,9 +8,17 @@ using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
+    [Serializable]
+    public class Spawn
+    {
+        public GameObject gameObject;
+        public int unitsCount;
+        public TextMeshProUGUI unitsCount_UI;
+    }
+
     [SerializeField] private GameObject[] nodes;
     [SerializeField] private GameObject endNode;
-    [SerializeField] private GameObject[] spawns;
+    [SerializeField] private Spawn[] spawns;
     [SerializeField] private GameObject unitsParent;
     [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Tilemap[] tilemaps;
@@ -24,16 +33,12 @@ public class GameManager : MonoBehaviour
     private List<TileInfos> list;
 
     private int remainingUnits;
-    private int leftSpawnUnitsCount;
-    private int centerSpawnUnitsCount;
-    private int rightSpawnUnitsCount;
 
     void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -54,20 +59,27 @@ public class GameManager : MonoBehaviour
 
         list = new List<TileInfos>();
 
-        GameObject unit = Instantiate(unitPrefab, spawns[0].transform);
-        if (!unit.TryGetComponent(out Player unitScript))
-        {
-            Debug.LogError($"{unitPrefab} doesn't have a Player script.");
-            return;
-        }
-        unit.transform.SetParent(unitsParent.transform);
         SetGraph();
-        //TestDijkstra();
-        var (dist, parent) = Dijkstra.Compute(graph, spawns[0]);
-        var path = Dijkstra.GetPath(parent, endNode);
-        path.RemoveAt(0);
-        unitScript.SetTilemaps(tilemaps);
-        unitScript.SetTargets(path);
+
+        foreach (var s in spawns)
+        {
+            var (_, parent) = Dijkstra.Compute(graph, s.gameObject);
+
+            for (int i = 0; i < s.unitsCount; i++)
+            {
+                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform);
+                if (!unit.TryGetComponent(out Player unitScript))
+                {
+                    Debug.LogError($"{unitPrefab} doesn't have a Player script.");
+                    return;
+                }
+                unit.transform.SetParent(unitsParent.transform);
+                var path = Dijkstra.GetPath(parent, endNode);
+                path.RemoveAt(0);
+                unitScript.SetTilemaps(tilemaps);
+                unitScript.SetTargets(path);
+            }
+        }
     }
 
     // Update is called once per frame
@@ -128,23 +140,38 @@ public class GameManager : MonoBehaviour
         o.transform.Rotate(0, 0, 180f);
     }
 
-    public void AddUnitToSpawn(TextMeshProUGUI unitsCountSpawn_UI)
+    public Spawn FindSpawnByGameObject(GameObject targetGameObject)
+    {
+        foreach (Spawn spawn in spawns)
+        {
+            if (spawn.gameObject == targetGameObject)
+            {
+                return spawn;
+            }
+        }
+        return null;
+    }
+
+    public void AddUnitToSpawn(GameObject spawn)
     {
         if (remainingUnits > 0)
         {
-            unitsCountSpawn_UI.text = (int.Parse(unitsCountSpawn_UI.text) + 1).ToString();
+            Spawn s = FindSpawnByGameObject(spawn);
+            s.unitsCount++;
             remainingUnits--;
+            s.unitsCount_UI.text = s.unitsCount.ToString();
             unitsCount_UI.text = remainingUnits.ToString() + "/" + unitsCount.ToString();
         }
     }
 
-    public void RemoveUnitToSpawn(TextMeshProUGUI unitsCountSpawn_UI)
+    public void RemoveUnitToSpawn(GameObject spawn)
     {
-        int unitsNb = int.Parse(unitsCountSpawn_UI.text);
-        if (unitsNb > 0)
+        Spawn s = FindSpawnByGameObject(spawn);
+        if (s.unitsCount > 0)
         {
-            unitsCountSpawn_UI.text = (unitsNb - 1).ToString();
+            s.unitsCount--;
             remainingUnits++;
+            s.unitsCount_UI.text = s.unitsCount.ToString();
             unitsCount_UI.text = remainingUnits.ToString() + "/" + unitsCount.ToString();
         }
     }

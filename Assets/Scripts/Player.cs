@@ -77,6 +77,11 @@ public class Player : MonoBehaviour
 
         if (canAttack)
         {
+            if (!transform.GetChild(0).TryGetComponent(out LancerAnimationHandler lancerAnimationHandler))
+            {
+                return;
+            }
+            lancerAnimationHandler.attackAnimationIsPlaying = true;
             animator.Play("Attack");
             canAttack = false;
             defenseScript.TakeDamage(damageDealt);
