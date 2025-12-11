@@ -7,15 +7,17 @@ public class BoidManager : MonoBehaviour
     public Transform leader;
 
     public int boidCount = 50;
-    public float spawnRadius = 10f;
+    public float spawnRadius = 1f;
 
-    public float cohesionWeight = 0.5f;
-    public float separationWeight = 2f;
+    public float cohesionWeight = 1f;
+    public float separationWeight = 1f;
     public float alignmentWeight = 1f;
-    public float leaderInfluence = 3f;
+    public float leaderInfluence = 1000f;
 
-    public float neighborDistance = 5f;
-    public float separationDistance = 2f;
+    public float neighborDistance = 1f;
+    public float separationDistance = 1f;
+
+    public float speed = 2f;
 
     List<Boid> boids = new List<Boid>();
 
@@ -41,8 +43,6 @@ public class BoidManager : MonoBehaviour
         return Mathf.Sqrt(distX * distX + distY * distY);
     }
 
-    // ----------- COMPORTEMENTS ----------------
-
     public Vector3 Cohesion(Boid b)
     {
         Vector3 center = Vector3.zero;
@@ -51,7 +51,8 @@ public class BoidManager : MonoBehaviour
         foreach (var other in boids)
         {
             if (other == b) continue;
-            if ((other.transform.position - b.transform.position).sqrMagnitude < neighborDistance * neighborDistance)
+        //transform.forward = velocity;
+            if (Distance(other, b) < separationDistance)
             {
                 center += other.transform.position;
                 count++;
@@ -88,7 +89,7 @@ public class BoidManager : MonoBehaviour
         foreach (var other in boids)
         {
             if (other == b) continue;
-            if ((other.transform.position - b.transform.position).sqrMagnitude < neighborDistance * neighborDistance)
+            if (Distance(other, b) < neighborDistance)
             {
                 avgDir += other.velocity;
                 count++;
