@@ -71,25 +71,30 @@ public class GameManager : MonoBehaviour
 
             for (int i = 0; i < s.unitsCount; i++)
             {
-                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle, Quaternion.identity);
+                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
                 if (!unit.TryGetComponent(out Player unitScript))
                 {
                     Debug.LogError($"{unitPrefab} doesn't have a Player script.");
                     return;
                 }
                 unit.transform.SetParent(unitsParent.transform);
-                var path = Dijkstra.GetPath(parent, endNode);
-                path.RemoveAt(0);
-                unitScript.SetTilemaps(tilemaps);
-                unitScript.SetTargets(path);
-
-
-
-                if (i != 0)
+                if (i == 0)
                 {
-                    boids.Add(new Boid(s.gameObject.transform.position));
+                    var path = Dijkstra.GetPath(parent, endNode);
+                    path.RemoveAt(0);
+                    unitScript.SetTilemaps(tilemaps);
+                    unitScript.SetTargets(path);
                 }
-                boids.Add(new Boid(s.gameObject.transform.position));
+                else
+                {
+                    if (!unit.TryGetComponent(out Boid boidScript))
+                    {
+                        Debug.LogError($"{unitPrefab} doesn't have a Player script.");
+                        return;
+                    }
+                    Debug.Log("test");
+                    boids.Add(boidScript);
+                }
             }
         }
     }
@@ -97,24 +102,26 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Boid boid in boids)
-        {
-            List<Boid> closeBoids = new();
+        //Debug.Log(boids.Count);
+        //foreach (Boid boid in boids)
+        //{
+        //    List<Boid> closeBoids = new();
 
-            foreach (Boid otherBoid in boids)
-            {
-                if (otherBoid == boid) continue;
-                float distance = boid.Distance(otherBoid);
-                if (distance < 200)
-                {
-                    closeBoids.Add(otherBoid);
-                }
-            }
+        //    foreach (Boid otherBoid in boids)
+        //    {
+        //        if (otherBoid == boid) continue;
+        //        float distance = boid.Distance(otherBoid);
+        //        if (distance < 200)
+        //        {
+        //            Debug.Log("testtt");
+        //            closeBoids.Add(otherBoid);
+        //        }
+        //    }
 
-            boid.MoveCloser(closeBoids);
-            boid.MoveWith(closeBoids);
-            boid.MoveAway(closeBoids, 20);
-        }
+        //    boid.MoveCloser(closeBoids);
+        //    boid.MoveWith(closeBoids);
+        //    boid.MoveAway(closeBoids, 20);
+        //}
     }
 
     void SetGraph()

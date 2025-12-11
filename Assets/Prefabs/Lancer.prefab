@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1483275970672216752}
   - component: {fileID: 6474698426169620675}
+  - component: {fileID: 2497315818872531905}
   m_Layer: 0
   m_Name: Lancer
   m_TagString: Untagged
@@ -47,6 +48,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageDealt: 5
   delayBetweenAttacks: 1
+--- !u!114 &2497315818872531905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224827079133704031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5591f5c1cc81ef46b28d49a9b08a49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &258052368085062610
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -136,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d82e5ee6f52078b409b29ab990f2a7e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackAnimationIsPlaying: 0
 --- !u!4 &7980744252308122847 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: ecba2bbeb090c3b429e1e108132a5411, type: 3}
