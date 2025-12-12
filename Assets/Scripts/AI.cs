@@ -21,8 +21,9 @@ public class AI : MonoBehaviour
     private List<TileInfos> movementPath = new();
 
     private State currentState;
+    public List<GameObject> boids;
 
-    enum State {
+    private enum State {
         Idle,
         Move,
         Attack
@@ -46,40 +47,58 @@ public class AI : MonoBehaviour
         {
             case State.Idle:
                 // there is no tower to destroy -> the game is finished
-                break;
+                return;
+
             case State.Move:
                 float dist = Vector3.Distance(currentTarget.transform.position, transform.position);
-                if (dist < 2)
+                if (dist < 2f)
                 {
                     animator.SetBool("isMoving", false);
                     currentState = State.Attack;
-                    MoveUnitTo(movementPath[0].parent.Value + new Vector2(0.5f, 0.5f));
-                    break;
+                    foreach (var b in boids)
+                    {
+                        b.GetComponent<Boid>().leader = currentTarget.transform;
+                        b.GetComponent<Boid>().mustAttack = true;
+                    }
+                    return;
                 }
 
                 MoveUnitTo(movementPath[0].parent.Value + new Vector2(0.5f, 0.5f));
 
-                break;
+                return;
+
             case State.Attack:
                 if (currentTarget == null)
                 {
                     currentState = State.Idle;
-                    break;
+                    foreach (var b in boids)
+                    {
+                        b.GetComponent<Boid>().mustAttack = false;
+                        //b.GetComponent<Boid>().isMoving = false;
+                    }
+                    return;
                 }
 
                 dist = Vector3.Distance(currentTarget.transform.position, transform.position);
-                if (dist > 2)
+                if (dist > 2f)
                 {
                     animator.SetBool("isMoving", true);
                     currentState = State.Move;
-                    break;
+                    foreach (var b in boids)
+                    {
+                        b.GetComponent<Boid>().leader = transform;
+                        b.GetComponent<Boid>().mustAttack = false;
+                        b.GetComponent<Boid>().isMoving = true;
+                    }
+                    return;
                 }
                 
                 if (canAttack) Attack(currentTarget);
                 
-                break;
+                return;
+
             default:
-                break;
+                return;
         }
     }
 

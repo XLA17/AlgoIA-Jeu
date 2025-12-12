@@ -35,7 +35,6 @@ public class GameManager : MonoBehaviour
     private List<TileInfos> list;
 
     private int remainingUnits;
-    private List<Boid> boids;
 
     //boids
     public float cohesionWeight = 1f;
@@ -45,6 +44,10 @@ public class GameManager : MonoBehaviour
 
     public float neighborDistance = 1f;
     public float separationDistance = 1f;
+
+    // TODO: update class Spawn with these two variables
+    private Dictionary<Spawn, GameObject> leaderPerSpawn;
+    private Dictionary<Spawn, List<GameObject>> boidsPerSpawn;
 
     void Awake()
     {
@@ -63,7 +66,23 @@ public class GameManager : MonoBehaviour
         unitsCount_UI.text = unitsCount.ToString() + "/" + unitsCount.ToString();
         remainingUnits = unitsCount;
 
-        boids = new List<Boid>();
+        boidsPerSpawn = new();
+        leaderPerSpawn = new();
+    }
+
+    private void Update()
+    {
+        //foreach (var s in spawns)
+        //{
+        //    // TODO: not secure
+        //    if (leaderPerSpawn[s].GetComponent<AI>().currentState == AI.State.Attack)
+        //    {
+        //        foreach (var b in boidsPerSpawn[s])
+        //        {
+        //            b.GetComponent<Boid>().isMoving = false;
+        //        }
+        //    }
+        //}
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -92,6 +111,10 @@ public class GameManager : MonoBehaviour
             unitScript.SetTilemaps(tilemaps);
             unitScript.SetTargets(path);
 
+            //leaderPerSpawn[s] = unit;
+
+            List<GameObject> boids = new();
+
             for (int i = 0; i < s.unitsCount - 1; i++)
             {
                 GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
@@ -105,16 +128,25 @@ public class GameManager : MonoBehaviour
                 boidScript.leader = unit.transform;
                 boidScript.velocity = UnityEngine.Random.insideUnitCircle;
 
+                //AddBoid(s, unitBoid);
+                boids.Add(unitBoid);
                 BoidManager.Instance.boids.Add(boidScript);
             }
+
+            // TODO: not secure
+            unit.GetComponent<AI>().boids = boids;
         }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    //public void AddBoid(Spawn spawner, GameObject boid)
+    //{
+    //    if (!boidsPerSpawn.ContainsKey(spawner))
+    //    {
+    //        boidsPerSpawn[spawner] = new();
+    //    }
 
-    }
+    //    boidsPerSpawn[spawner].Add(boid);
+    //}
 
     void SetGraph()
     {

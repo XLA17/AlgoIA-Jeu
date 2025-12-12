@@ -1,37 +1,86 @@
+using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Boid : MonoBehaviour
 {
-    public Vector3 velocity;
-    public float speed = 2f;
+    [SerializeField] private int damageDealt;
+    [SerializeField] private float delayBetweenAttacks;
+    [SerializeField] private float speed = 2f;
 
-    public Transform leader;
+    public Vector3 velocity;
+    public bool mustAttack = false;
+    public bool isMoving = true;
+    public Transform leader; // TODO: change name
+
+    private Animator animator;
+    private LancerAnimationHandler animationHandler;
+    private bool canAttack = false;
+
+    private void Start()
+    {
+        animator = transform.GetChild(0).GetComponent<Animator>();
+        animationHandler = transform.GetChild(0).GetComponent<LancerAnimationHandler>();
+    }
 
     void Update()
     {
-        Vector3 accel = Vector3.zero;
+        canAttack = !animationHandler.attackAnimationIsPlaying;
 
-        // --- RÈGLE 1 : Cohésion ---
-        accel += (BoidManager.Instance.Cohesion(this) * BoidManager.Instance.cohesionWeight);
+        if (mustAttack)
+        {
+            float dist = Vector3.Distance(leader.transform.position, transform.position);
+            if (dist < 2f)
+            {
+                Attack();
+                isMoving = false;
+            }
+        }
 
-        // --- RÈGLE 2 : Séparation ---
-        accel += (BoidManager.Instance.Separation(this, leader) * BoidManager.Instance.separationWeight);
+        if (isMoving)
+        {
+            Vector3 accel = Vector3.zero;
 
-        // --- RÈGLE 3 : Alignement ---
-        accel += (BoidManager.Instance.Alignment(this) * BoidManager.Instance.alignmentWeight);
+            accel += (BoidManager.Instance.Cohesion(this) * BoidManager.Instance.cohesionWeight);
 
-        // --- RÈGLE 4 (optionnelle) : Attraction vers le leader ---
-        accel += (BoidManager.Instance.LeaderInfluence(this, leader) * BoidManager.Instance.leaderInfluence);
-        accel += (leader.position - transform.position).normalized * BoidManager.Instance.leaderInfluence;
+            accel += (BoidManager.Instance.Separation(this, leader) * BoidManager.Instance.separationWeight);
+
+            accel += (BoidManager.Instance.Alignment(this) * BoidManager.Instance.alignmentWeight);
+
+            accel += (BoidManager.Instance.LeaderInfluence(this, leader) * BoidManager.Instance.leaderInfluence);
+            //accel += (leader.position - transform.position).normalized * BoidManager.Instance.leaderInfluence;
 
 
-        // Mise à jour vitesse / position
-        velocity += accel * Time.deltaTime;
-        velocity = (Vector2)velocity.normalized * speed;
+            velocity += accel * Time.deltaTime;
+            velocity = (Vector2)velocity.normalized * speed;
 
-        transform.position += velocity * Time.deltaTime;
+            transform.position += velocity * Time.deltaTime;
+        }
+    }
+
+    void Attack()
+    {
+        if (!leader.TryGetComponent(out Defense defenseScript))
+        {
+            return;
+        }
+
+        if (canAttack)
+        {
+            if (!transform.GetChild(0).TryGetComponent(out LancerAnimationHandler lancerAnimationHandler))
+            {
+                return;
+            }
+            lancerAnimationHandler.attackAnimationIsPlaying = true;
+            animator.Play("Attack");
+            canAttack = false;
+            defenseScript.TakeDamage(damageDealt);
+            if (defenseScript.IsDead())
+            {
+                mustAttack = false;
+            }
+        }
     }
 
     private void OnDrawGizmos()
