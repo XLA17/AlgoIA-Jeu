@@ -5,7 +5,7 @@ using UnityEngine;
 public class Boid : MonoBehaviour
 {
     public Vector3 velocity;
-    public float speed = 5f;
+    public float speed = 2f;
 
     public Transform leader;
 
@@ -32,6 +32,13 @@ public class Boid : MonoBehaviour
         velocity = (Vector2)velocity.normalized * speed;
 
         transform.position += velocity * Time.deltaTime;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position, BoidManager.Instance.cohesionDistance);
+        Gizmos.DrawWireSphere(transform.position, BoidManager.Instance.separationDistance);
+        Gizmos.DrawWireSphere(transform.position, BoidManager.Instance.alignmentDistance);
     }
 }
 

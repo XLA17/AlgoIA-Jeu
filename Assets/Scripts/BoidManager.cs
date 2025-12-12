@@ -5,16 +5,18 @@ public class BoidManager : MonoBehaviour
 {
     public static BoidManager Instance;
 
-    public int boidCount = 50;
-    public float spawnRadius = 1f;
+    //public int boidCount = 50;
+    //public float spawnRadius = 1f;
+    public float spriteWidth = 0.5f;
 
     public float cohesionWeight = 1f;
     public float separationWeight = 1f;
     public float alignmentWeight = 1f;
     public float leaderInfluence = 100f;
 
-    public float neighborDistance = 1f;
+    public float cohesionDistance = 1f;
     public float separationDistance = 1f;
+    public float alignmentDistance = 1f;
 
     public float speed = 2f;
 
@@ -47,7 +49,7 @@ public class BoidManager : MonoBehaviour
         foreach (var other in boids)
         {
             if (other == b) continue;
-            if (Distance(other.transform.position, b.transform.position) < separationDistance)
+            if (Distance(other.transform.position, b.transform.position) < cohesionDistance)
             {
                 center += other.transform.position;
                 count++;
@@ -69,12 +71,12 @@ public class BoidManager : MonoBehaviour
             if (other == b) continue;
 
             float d = Distance(other.transform.position, b.transform.position);
-            if (d < separationDistance)
+            if (d < separationDistance + spriteWidth)
                 force += (b.transform.position - other.transform.position).normalized / d;
         }
 
         float dLeader = Distance(b.transform.position, leader.transform.position);
-        if (dLeader < separationDistance)
+        if (dLeader < separationDistance + spriteWidth)
             force += (b.transform.position - leader.transform.position).normalized / dLeader;
 
         return force;
@@ -88,7 +90,7 @@ public class BoidManager : MonoBehaviour
         foreach (var other in boids)
         {
             if (other == b) continue;
-            if (Distance(other.transform.position, b.transform.position) < neighborDistance)
+            if (Distance(other.transform.position, b.transform.position) < alignmentDistance)
             {
                 avgDir += other.velocity;
                 count++;

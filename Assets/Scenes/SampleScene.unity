@@ -80235,12 +80235,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boidCount: 50
   spawnRadius: 1
-  cohesionWeight: 1
-  separationWeight: 1
-  alignmentWeight: 1
+  cohesionWeight: 0
+  separationWeight: 10000
+  alignmentWeight: 0
   leaderInfluence: 100
-  neighborDistance: 1
-  separationDistance: 1
+  cohesionDistance: 15
+  separationDistance: 0.5
+  alignmentDistance: 5
   speed: 2
   boids: []
 --- !u!4 &1354752467

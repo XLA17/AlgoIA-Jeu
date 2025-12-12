@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private int damageDealt;
     [SerializeField] private float delayBetweenAttacks;
+    [SerializeField] private float speed = 2f;
 
     private Animator animator;
     private LancerAnimationHandler animationHandler;
@@ -120,7 +121,7 @@ public class Player : MonoBehaviour
         if (Vector3.Distance(transform.position, position) >= 0.01f)
         {
             Vector3 dir = ((Vector3)position - transform.position).normalized;
-            transform.position += dir * Time.deltaTime * 5;
+            transform.position += dir * Time.deltaTime * speed;
         } else
         {
             movementPath.RemoveAt(0);

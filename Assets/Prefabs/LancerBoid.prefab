@@ -46,9 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0, z: 0}
-  speed: 5
+  speed: 2
   leader: {fileID: 0}
-  manager: {fileID: 0}
 --- !u!1001 &258052368085062610
 PrefabInstance:
   m_ObjectHideFlags: 0

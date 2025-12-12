@@ -113,26 +113,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(boids.Count);
-        //foreach (Boid boid in boids)
-        //{
-        //    List<Boid> closeBoids = new();
 
-        //    foreach (Boid otherBoid in boids)
-        //    {
-        //        if (otherBoid == boid) continue;
-        //        float distance = boid.Distance(otherBoid);
-        //        if (distance < 200)
-        //        {
-        //            Debug.Log("testtt");
-        //            closeBoids.Add(otherBoid);
-        //        }
-        //    }
-
-        //    boid.MoveCloser(closeBoids);
-        //    boid.MoveWith(closeBoids);
-        //    boid.MoveAway(closeBoids, 20);
-        //}
     }
 
     void SetGraph()
