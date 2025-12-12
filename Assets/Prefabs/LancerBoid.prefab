@@ -45,9 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5591f5c1cc81ef46b28d49a9b08a49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
+  damageDealt: 5
+  delayBetweenAttacks: 1
   speed: 2
+  velocity: {x: 0, y: 0, z: 0}
+  mustAttack: 0
+  isMoving: 1
   leader: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!1001 &258052368085062610
 PrefabInstance:
   m_ObjectHideFlags: 0

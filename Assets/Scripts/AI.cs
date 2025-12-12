@@ -74,7 +74,8 @@ public class AI : MonoBehaviour
                     foreach (var b in boids)
                     {
                         b.GetComponent<Boid>().mustAttack = false;
-                        //b.GetComponent<Boid>().isMoving = false;
+                        b.GetComponent<Boid>().isMoving = false;
+                        b.GetComponent<Boid>().animator.SetBool("isMoving", false);
                     }
                     return;
                 }
@@ -89,6 +90,7 @@ public class AI : MonoBehaviour
                         b.GetComponent<Boid>().leader = transform;
                         b.GetComponent<Boid>().mustAttack = false;
                         b.GetComponent<Boid>().isMoving = true;
+                        b.GetComponent<Boid>().animator.SetBool("isMoving", true);
                     }
                     return;
                 }

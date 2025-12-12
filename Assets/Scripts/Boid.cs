@@ -13,8 +13,8 @@ public class Boid : MonoBehaviour
     public bool mustAttack = false;
     public bool isMoving = true;
     public Transform leader; // TODO: change name
+    public Animator animator;
 
-    private Animator animator;
     private LancerAnimationHandler animationHandler;
     private bool canAttack = false;
 
@@ -22,6 +22,7 @@ public class Boid : MonoBehaviour
     {
         animator = transform.GetChild(0).GetComponent<Animator>();
         animationHandler = transform.GetChild(0).GetComponent<LancerAnimationHandler>();
+        animator.SetBool("isMoving", true);
     }
 
     void Update()
@@ -35,6 +36,7 @@ public class Boid : MonoBehaviour
             {
                 Attack();
                 isMoving = false;
+                animator.SetBool("isMoving", false);
             }
         }
 
