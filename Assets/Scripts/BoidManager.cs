@@ -3,8 +3,7 @@ using System.Collections.Generic;
 
 public class BoidManager : MonoBehaviour
 {
-    public Boid boidPrefab;
-    public Transform leader;
+    public static BoidManager Instance;
 
     public int boidCount = 50;
     public float spawnRadius = 1f;
@@ -12,34 +11,31 @@ public class BoidManager : MonoBehaviour
     public float cohesionWeight = 1f;
     public float separationWeight = 1f;
     public float alignmentWeight = 1f;
-    public float leaderInfluence = 1000f;
+    public float leaderInfluence = 100f;
 
     public float neighborDistance = 1f;
     public float separationDistance = 1f;
 
     public float speed = 2f;
 
-    List<Boid> boids = new List<Boid>();
+    public List<Boid> boids = new List<Boid>();
 
-    void Start()
+    void Awake()
     {
-        for (int i = 0; i < boidCount; i++)
+        if (Instance == null)
         {
-            Vector3 pos = transform.position + (Vector3)Random.insideUnitCircle * spawnRadius;
-            Boid b = Instantiate(boidPrefab, pos, Quaternion.identity);
-
-            b.manager = this;
-            b.leader = leader;
-            b.velocity = Random.insideUnitCircle;
-
-            boids.Add(b);
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    public float Distance(Boid b1, Boid b2)
+    public float Distance(Vector3 v1, Vector3 v2)
     {
-        float distX = b2.transform.position.x - b1.transform.position.x;
-        float distY = b2.transform.position.y - b1.transform.position.y;
+        float distX = v2.x - v1.x;
+        float distY = v2.y - v1.y;
         return Mathf.Sqrt(distX * distX + distY * distY);
     }
 
@@ -51,8 +47,7 @@ public class BoidManager : MonoBehaviour
         foreach (var other in boids)
         {
             if (other == b) continue;
-        //transform.forward = velocity;
-            if (Distance(other, b) < separationDistance)
+            if (Distance(other.transform.position, b.transform.position) < separationDistance)
             {
                 center += other.transform.position;
                 count++;
@@ -65,7 +60,7 @@ public class BoidManager : MonoBehaviour
         return (center - b.transform.position).normalized;
     }
 
-    public Vector3 Separation(Boid b)
+    public Vector3 Separation(Boid b, Transform leader)
     {
         Vector3 force = Vector3.zero;
 
@@ -73,10 +68,14 @@ public class BoidManager : MonoBehaviour
         {
             if (other == b) continue;
 
-            float d = Distance(other, b);
+            float d = Distance(other.transform.position, b.transform.position);
             if (d < separationDistance)
                 force += (b.transform.position - other.transform.position).normalized / d;
         }
+
+        float dLeader = Distance(b.transform.position, leader.transform.position);
+        if (dLeader < separationDistance)
+            force += (b.transform.position - leader.transform.position).normalized / dLeader;
 
         return force;
     }
@@ -89,7 +88,7 @@ public class BoidManager : MonoBehaviour
         foreach (var other in boids)
         {
             if (other == b) continue;
-            if (Distance(other, b) < neighborDistance)
+            if (Distance(other.transform.position, b.transform.position) < neighborDistance)
             {
                 avgDir += other.velocity;
                 count++;
@@ -99,5 +98,12 @@ public class BoidManager : MonoBehaviour
         if (count == 0) return Vector3.zero;
 
         return avgDir.normalized;
+    }
+
+    public Vector3 LeaderInfluence(Boid b, Transform leader)
+    {
+        Vector3 force = (leader.position - b.transform.position).normalized;
+
+        return force;
     }
 }

@@ -7,24 +7,25 @@ public class Boid : MonoBehaviour
     public Vector3 velocity;
     public float speed = 5f;
 
-    [HideInInspector] public Transform leader;
-    [HideInInspector] public BoidManager manager;
+    public Transform leader;
 
     void Update()
     {
         Vector3 accel = Vector3.zero;
 
         // --- RÈGLE 1 : Cohésion ---
-        accel += (manager.Cohesion(this) * manager.cohesionWeight);
+        accel += (BoidManager.Instance.Cohesion(this) * BoidManager.Instance.cohesionWeight);
 
         // --- RÈGLE 2 : Séparation ---
-        accel += (manager.Separation(this) * manager.separationWeight);
+        accel += (BoidManager.Instance.Separation(this, leader) * BoidManager.Instance.separationWeight);
 
         // --- RÈGLE 3 : Alignement ---
-        accel += (manager.Alignment(this) * manager.alignmentWeight);
+        accel += (BoidManager.Instance.Alignment(this) * BoidManager.Instance.alignmentWeight);
 
         // --- RÈGLE 4 (optionnelle) : Attraction vers le leader ---
-        accel += (leader.position - transform.position).normalized * manager.leaderInfluence;
+        accel += (BoidManager.Instance.LeaderInfluence(this, leader) * BoidManager.Instance.leaderInfluence);
+        accel += (leader.position - transform.position).normalized * BoidManager.Instance.leaderInfluence;
+
 
         // Mise à jour vitesse / position
         velocity += accel * Time.deltaTime;

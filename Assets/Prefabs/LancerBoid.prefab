@@ -9,10 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1483275970672216752}
-  - component: {fileID: 6474698426169620675}
   - component: {fileID: 2497315818872531905}
   m_Layer: 0
-  m_Name: Lancer
+  m_Name: LancerBoid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,20 +33,6 @@ Transform:
   - {fileID: 7980744252308122847}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6474698426169620675
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6224827079133704031}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 247c32ac4d3168540941fed85799d260, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageDealt: 5
-  delayBetweenAttacks: 1
 --- !u!114 &2497315818872531905
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,6 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5591f5c1cc81ef46b28d49a9b08a49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  velocity: {x: 0, y: 0, z: 0}
+  speed: 5
+  leader: {fileID: 0}
+  manager: {fileID: 0}
 --- !u!1001 &258052368085062610
 PrefabInstance:
   m_ObjectHideFlags: 0

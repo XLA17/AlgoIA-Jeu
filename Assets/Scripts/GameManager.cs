@@ -21,7 +21,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject endNode;
     [SerializeField] private Spawn[] spawns;
     [SerializeField] private GameObject unitsParent;
-    [SerializeField] private GameObject unitPrefab;
+    [SerializeField] private GameObject unitAIPrefab;
+    [SerializeField] private GameObject unitBoidPrefab;
     [SerializeField] private Tilemap[] tilemaps;
     [SerializeField] private TextMeshProUGUI unitsCount_UI;
     [SerializeField] private GameObject canva_UI;
@@ -35,6 +36,15 @@ public class GameManager : MonoBehaviour
 
     private int remainingUnits;
     private List<Boid> boids;
+
+    //boids
+    public float cohesionWeight = 1f;
+    public float separationWeight = 1f;
+    public float alignmentWeight = 1f;
+    public float leaderInfluence = 1000f;
+
+    public float neighborDistance = 1f;
+    public float separationDistance = 1f;
 
     void Awake()
     {
@@ -69,32 +79,33 @@ public class GameManager : MonoBehaviour
         {
             var (_, parent) = Dijkstra.Compute(graph, s.gameObject);
 
-            for (int i = 0; i < s.unitsCount; i++)
+            GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+            if (!unit.TryGetComponent(out Player unitScript))
             {
-                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-                if (!unit.TryGetComponent(out Player unitScript))
+                Debug.LogError($"{unitAIPrefab} doesn't have a Player script.");
+                return;
+            }
+            unit.transform.SetParent(unitsParent.transform);
+
+            var path = Dijkstra.GetPath(parent, endNode);
+            path.RemoveAt(0);
+            unitScript.SetTilemaps(tilemaps);
+            unitScript.SetTargets(path);
+
+            for (int i = 0; i < s.unitsCount - 1; i++)
+            {
+                GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+
+                if (!unitBoid.TryGetComponent(out Boid boidScript))
                 {
-                    Debug.LogError($"{unitPrefab} doesn't have a Player script.");
+                    Debug.LogError($"{unitBoidPrefab} doesn't have a Boid script.");
                     return;
                 }
-                unit.transform.SetParent(unitsParent.transform);
-                if (i == 0)
-                {
-                    var path = Dijkstra.GetPath(parent, endNode);
-                    path.RemoveAt(0);
-                    unitScript.SetTilemaps(tilemaps);
-                    unitScript.SetTargets(path);
-                }
-                else
-                {
-                    if (!unit.TryGetComponent(out Boid boidScript))
-                    {
-                        Debug.LogError($"{unitPrefab} doesn't have a Player script.");
-                        return;
-                    }
-                    Debug.Log("test");
-                    boids.Add(boidScript);
-                }
+
+                boidScript.leader = unit.transform;
+                boidScript.velocity = UnityEngine.Random.insideUnitCircle;
+
+                BoidManager.Instance.boids.Add(boidScript);
             }
         }
     }
