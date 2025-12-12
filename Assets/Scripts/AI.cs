@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UIElements;
 
-public class Player : MonoBehaviour
+public class AI : MonoBehaviour
 {
     [SerializeField] private int damageDealt;
     [SerializeField] private float delayBetweenAttacks;
@@ -20,11 +20,21 @@ public class Player : MonoBehaviour
     private bool canAttack = true;
     private List<TileInfos> movementPath = new();
 
+    private State currentState;
+
+    enum State {
+        Idle,
+        Move,
+        Attack
+    }
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         animator = transform.GetChild(0).GetComponent<Animator>();
         animationHandler = transform.GetChild(0).GetComponent<LancerAnimationHandler>();
+        animator.SetBool("isMoving", true);
+        currentState = State.Move;
     }
 
     // Update is called once per frame
@@ -32,23 +42,45 @@ public class Player : MonoBehaviour
     {
         canAttack = !animationHandler.attackAnimationIsPlaying;
 
-        if (currentTarget != null && canAttack)
+        switch (currentState)
         {
-            float dist = Vector3.Distance(currentTarget.transform.position, transform.position);
-            if (dist < 2)
-            {
-                animator.SetBool("isMoving", false);
-                Attack(currentTarget);
-            } else
-            {
-                animator.SetBool("isMoving", true);
-                if (movementPath.Count > 0)
+            case State.Idle:
+                // there is no tower to destroy -> the game is finished
+                break;
+            case State.Move:
+                float dist = Vector3.Distance(currentTarget.transform.position, transform.position);
+                if (dist < 2)
                 {
+                    animator.SetBool("isMoving", false);
+                    currentState = State.Attack;
                     MoveUnitTo(movementPath[0].parent.Value + new Vector2(0.5f, 0.5f));
+                    break;
                 }
-            }
-        }
 
+                MoveUnitTo(movementPath[0].parent.Value + new Vector2(0.5f, 0.5f));
+
+                break;
+            case State.Attack:
+                if (currentTarget == null)
+                {
+                    currentState = State.Idle;
+                    break;
+                }
+
+                dist = Vector3.Distance(currentTarget.transform.position, transform.position);
+                if (dist > 2)
+                {
+                    animator.SetBool("isMoving", true);
+                    currentState = State.Move;
+                    break;
+                }
+                
+                if (canAttack) Attack(currentTarget);
+                
+                break;
+            default:
+                break;
+        }
     }
 
     public void SetSpawn(GameObject spawn)

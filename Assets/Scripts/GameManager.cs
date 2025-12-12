@@ -80,9 +80,9 @@ public class GameManager : MonoBehaviour
             var (_, parent) = Dijkstra.Compute(graph, s.gameObject);
 
             GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-            if (!unit.TryGetComponent(out Player unitScript))
+            if (!unit.TryGetComponent(out AI unitScript))
             {
-                Debug.LogError($"{unitAIPrefab} doesn't have a Player script.");
+                Debug.LogError($"{unitAIPrefab} doesn't have a AI script.");
                 return;
             }
             unit.transform.SetParent(unitsParent.transform);
