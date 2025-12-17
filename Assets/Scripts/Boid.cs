@@ -53,6 +53,7 @@ public class Boid : MonoBehaviour
             accel += (BoidManager.Instance.LeaderInfluence(this, leader) * BoidManager.Instance.leaderInfluence);
             //accel += (leader.position - transform.position).normalized * BoidManager.Instance.leaderInfluence;
 
+            accel += (BoidManager.Instance.WallInfluence(this) * BoidManager.Instance.wallInfluence);
 
             velocity += accel * Time.deltaTime;
             velocity = (Vector2)velocity.normalized * speed;

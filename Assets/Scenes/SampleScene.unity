@@ -80180,14 +80180,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1a3d8dd04704e6439be12f2f9f85b7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tilemaps:
+  - {fileID: 1732411365}
+  - {fileID: 211628653}
   spriteWidth: 0.5
   cohesionWeight: 0
   separationWeight: 10000
   alignmentWeight: 0
   leaderInfluence: 100
+  wallInfluence: 100
   cohesionDistance: 15
   separationDistance: 0.5
   alignmentDistance: 5
+  wallDistance: 1
   speed: 2
   boids: []
 --- !u!4 &1354752467
