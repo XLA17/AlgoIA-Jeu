@@ -96,9 +96,19 @@ public class GameManager : MonoBehaviour
 
         foreach (var s in spawns)
         {
+            if (s.unitsCount == 0)
+            {
+                continue;
+            }
+
             var (_, parent) = Dijkstra.Compute(graph, s.gameObject);
             var pathAI = Dijkstra.GetPath(parent, endNode);
             pathAI.RemoveAt(0);
+
+            // ---- better
+
+
+
 
             // ---- for path finding algos
 
@@ -117,17 +127,9 @@ public class GameManager : MonoBehaviour
 
             // ---- for boids :
 
-            if (s.unitsCount == 0)
-            {
-                return;
-            }
-
             GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-            if (!unit.TryGetComponent(out AI unitScript))
-            {
-                Debug.LogError($"{unitAIPrefab} doesn't have a AI script.");
-                return;
-            }
+            AI unitScript = unit.AddComponent<AI>();
+
             unit.transform.SetParent(unitsParent.transform);
 
             var path = Dijkstra.GetPath(parent, endNode);
@@ -141,24 +143,18 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < s.unitsCount - 1; i++)
             {
                 GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-
-                if (!unitBoid.TryGetComponent(out Boid boidScript))
-                {
-                    Debug.LogError($"{unitBoidPrefab} doesn't have a Boid script.");
-                    return;
-                }
+                Boid boidScript = unitBoid.AddComponent<Boid>();
 
                 unitBoid.transform.SetParent(unitsParent.transform);
 
-                boidScript.leader = unit.transform;
+                boidScript.target = unit.transform;
                 boidScript.velocity = UnityEngine.Random.insideUnitCircle;
 
-                //AddBoid(s, unitBoid);
                 boids.Add(unitBoid);
                 BoidManager.Instance.boids.Add(boidScript);
             }
 
-        //TODO: not secure
+            //TODO: not secure
             unit.GetComponent<AI>().boids = boids;
         }
     }

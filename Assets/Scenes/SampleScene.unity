@@ -80094,7 +80094,7 @@ MonoBehaviour:
   spriteWidth: 0.4
   cohesionWeight: 0
   separationWeight: 10000
-  alignmentWeight: 0
+  alignmentWeight: 100
   leaderInfluence: 100
   wallInfluence: 10000
   cohesionDistance: 15

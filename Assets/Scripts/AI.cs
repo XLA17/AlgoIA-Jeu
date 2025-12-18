@@ -57,7 +57,7 @@ public class AI : MonoBehaviour
                     currentState = State.Attack;
                     foreach (var b in boids)
                     {
-                        b.GetComponent<Boid>().leader = currentTarget.transform;
+                        b.GetComponent<Boid>().target = currentTarget.transform;
                         b.GetComponent<Boid>().mustAttack = true;
                     }
                     return;
@@ -87,7 +87,7 @@ public class AI : MonoBehaviour
                     currentState = State.Move;
                     foreach (var b in boids)
                     {
-                        b.GetComponent<Boid>().leader = transform;
+                        b.GetComponent<Boid>().target = transform;
                         b.GetComponent<Boid>().mustAttack = false;
                         b.GetComponent<Boid>().isMoving = true;
                         b.GetComponent<Boid>().animator.SetBool("isMoving", true);

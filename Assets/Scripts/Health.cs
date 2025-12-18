@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private int maxHealth;
-    [SerializeField] private GameObject deadSkull;
+    [SerializeField] private UnitSciptableObject unitScriptableObject;
+    [SerializeField] private GameObject deathIcon;
 
     private int health;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        health = maxHealth;
+        health = unitScriptableObject.maxHealth;
     }
 
     // Update is called once per frame
@@ -29,7 +29,7 @@ public class Health : MonoBehaviour
         {
             gameObject.SetActive(false);
             transform.position = new Vector3(-100000, -100000, 0);
-            Instantiate(deadSkull, transform.position, Quaternion.identity);
+            Instantiate(deathIcon, transform.position, Quaternion.identity);
         }
     }
 }

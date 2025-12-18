@@ -12,7 +12,7 @@ public class Boid : MonoBehaviour
     public Vector3 velocity;
     public bool mustAttack = false;
     public bool isMoving = true;
-    public Transform leader; // TODO: change name
+    public Transform target; // TODO: change name
     public Animator animator;
 
     private LancerAnimationHandler animationHandler;
@@ -31,7 +31,7 @@ public class Boid : MonoBehaviour
 
         if (mustAttack)
         {
-            float dist = Vector3.Distance(leader.transform.position, transform.position);
+            float dist = Vector3.Distance(target.transform.position, transform.position);
             if (dist < 2f)
             {
                 Attack();
@@ -46,12 +46,11 @@ public class Boid : MonoBehaviour
 
             accel += (BoidManager.Instance.Cohesion(this) * BoidManager.Instance.cohesionWeight);
 
-            accel += (BoidManager.Instance.Separation(this, leader) * BoidManager.Instance.separationWeight);
+            accel += (BoidManager.Instance.Separation(this, target) * BoidManager.Instance.separationWeight);
 
             accel += (BoidManager.Instance.Alignment(this) * BoidManager.Instance.alignmentWeight);
 
-            accel += (BoidManager.Instance.LeaderInfluence(this, leader) * BoidManager.Instance.leaderInfluence);
-            //accel += (leader.position - transform.position).normalized * BoidManager.Instance.leaderInfluence;
+            accel += (BoidManager.Instance.LeaderInfluence(this, target) * BoidManager.Instance.leaderInfluence);
 
             accel += (BoidManager.Instance.WallInfluence(this) * BoidManager.Instance.wallInfluence);
             Debug.Log("wallInf:  " + BoidManager.Instance.WallInfluence(this));
@@ -65,7 +64,7 @@ public class Boid : MonoBehaviour
 
     void Attack()
     {
-        if (!leader.TryGetComponent(out Defense defenseScript))
+        if (!target.TryGetComponent(out Defense defenseScript))
         {
             return;
         }

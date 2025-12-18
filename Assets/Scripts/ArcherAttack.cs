@@ -19,7 +19,7 @@ public class ArcherAttack : MonoBehaviour
         {
             canAttack = false;
             animator.Play("Shoot");
-            unitHealthScript.TakeDamage(damageDealt);
+            //unitHealthScript.TakeDamage(damageDealt);
             StartCoroutine(AttackCoroutine());
         }
     }
