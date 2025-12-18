@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1483275970672216752}
   - component: {fileID: 8914654610669095444}
   - component: {fileID: 1992627179899641645}
+  - component: {fileID: 2163790383637777520}
   m_Layer: 0
   m_Name: Lancer
   m_TagString: Untagged
@@ -85,6 +86,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitScriptableObject: {fileID: 11400000, guid: bf99166dac6a15f4b958f17c36133281, type: 2}
   deathIcon: {fileID: 5915301953915446576, guid: 6f76b9027e7bbd34dad66ea049e76feb, type: 3}
+--- !u!114 &2163790383637777520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224827079133704031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb7ee622f7aa3b2498c9f64966071fa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitScriptableObject: {fileID: 11400000, guid: bf99166dac6a15f4b958f17c36133281, type: 2}
 --- !u!1001 &258052368085062610
 PrefabInstance:
   m_ObjectHideFlags: 0

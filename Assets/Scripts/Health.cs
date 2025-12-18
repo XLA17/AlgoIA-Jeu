@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] private UnitSciptableObject unitScriptableObject;
+    [SerializeField] private UnitScriptableObject unitScriptableObject;
     [SerializeField] private GameObject deathIcon;
 
     private int health;

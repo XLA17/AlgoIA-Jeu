@@ -21,8 +21,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject endNode;
     [SerializeField] private Spawn[] spawns;
     [SerializeField] private GameObject unitsParent;
-    [SerializeField] private GameObject unitAIPrefab;
-    [SerializeField] private GameObject unitBoidPrefab;
+    //[SerializeField] private GameObject unitAIPrefab;
+    //[SerializeField] private GameObject unitBoidPrefab;
+    [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Tilemap[] tilemaps;
     [SerializeField] private TextMeshProUGUI unitsCount_UI;
     [SerializeField] private GameObject canva_UI;
@@ -107,7 +108,25 @@ public class GameManager : MonoBehaviour
 
             // ---- better
 
+            for (int i = 0; i < s.unitsCount; i++)
+            {
+                GameObject unit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+                if (!unit.TryGetComponent(out UnitManager unitScript))
+                {
+                    Debug.LogError($"{unit} doesn't have a UnitManager script.");
+                    return;
+                }
+                unit.transform.SetParent(unitsParent.transform);
 
+                if (i == 0)
+                {
+                    unitScript.InitializeAI(pathAI, tilemaps);
+                }
+                else
+                {
+                    unitScript.InitializeBoid();
+                }
+            }
 
 
             // ---- for path finding algos
@@ -127,35 +146,35 @@ public class GameManager : MonoBehaviour
 
             // ---- for boids :
 
-            GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-            AI unitScript = unit.AddComponent<AI>();
+            //GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+            //AI unitScript = unit.AddComponent<AI>();
 
-            unit.transform.SetParent(unitsParent.transform);
+            //unit.transform.SetParent(unitsParent.transform);
 
-            var path = Dijkstra.GetPath(parent, endNode);
-            path.RemoveAt(0);
-            unitScript.SetTilemaps(tilemaps);
-            unitScript.SetTargets(path);
+            //var path = Dijkstra.GetPath(parent, endNode);
+            //path.RemoveAt(0);
+            //unitScript.SetTilemaps(tilemaps);
+            //unitScript.SetTargets(path);
 
 
-            List<GameObject> boids = new();
+            //List<GameObject> boids = new();
 
-            for (int i = 0; i < s.unitsCount - 1; i++)
-            {
-                GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-                Boid boidScript = unitBoid.AddComponent<Boid>();
+            //for (int i = 0; i < s.unitsCount - 1; i++)
+            //{
+            //    GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+            //    Boid boidScript = unitBoid.AddComponent<Boid>();
 
-                unitBoid.transform.SetParent(unitsParent.transform);
+            //    unitBoid.transform.SetParent(unitsParent.transform);
 
-                boidScript.target = unit.transform;
-                boidScript.velocity = UnityEngine.Random.insideUnitCircle;
+            //    boidScript.target = unit.transform;
+            //    boidScript.velocity = UnityEngine.Random.insideUnitCircle;
 
-                boids.Add(unitBoid);
-                BoidManager.Instance.boids.Add(boidScript);
-            }
+            //    boids.Add(unitBoid);
+            //    BoidManager.Instance.boids.Add(boidScript);
+            //}
 
-            //TODO: not secure
-            unit.GetComponent<AI>().boids = boids;
+            ////TODO: not secure
+            //unit.GetComponent<AI>().boids = boids;
         }
     }
 
