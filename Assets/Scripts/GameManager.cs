@@ -148,6 +148,8 @@ public class GameManager : MonoBehaviour
                     return;
                 }
 
+                unitBoid.transform.SetParent(unitsParent.transform);
+
                 boidScript.leader = unit.transform;
                 boidScript.velocity = UnityEngine.Random.insideUnitCircle;
 

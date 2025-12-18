@@ -114,7 +114,7 @@ Transform:
   m_GameObject: {fileID: 5045060430133351472}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.59, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -164,7 +164,7 @@ SpriteRenderer:
   m_SortingLayerID: 1193541609
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 5002096206624228670, guid: 843163c04976ab845b1ab6986a53abaf, type: 3}
+  m_Sprite: {fileID: 5002096206624228670, guid: f1cb5c199be483145985372ec5c67e00, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -430,7 +430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2191500215262522252, guid: 5e8ba95308668f747a0caaafe64d3b0d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 1.18
       objectReference: {fileID: 0}
     - target: {fileID: 2191500215262522252, guid: 5e8ba95308668f747a0caaafe64d3b0d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -464,9 +464,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6257716666263179700, guid: 5e8ba95308668f747a0caaafe64d3b0d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.47
+      objectReference: {fileID: 0}
     - target: {fileID: 6784851464277145809, guid: 5e8ba95308668f747a0caaafe64d3b0d, type: 3}
       propertyPath: m_Name
-      value: Archer (1)
+      value: Archer
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
