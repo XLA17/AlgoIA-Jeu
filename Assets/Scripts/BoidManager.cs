@@ -118,13 +118,74 @@ public class BoidManager : MonoBehaviour
     {
         Vector3 force = new();
 
-        //force += 
+        bool right = false;
+        Vector3 otherPosR = b.transform.position + new Vector3(spriteWidth, 0, 0);
+        bool left = false;
+        Vector3 otherPosL = b.transform.position + new Vector3(-spriteWidth, 0, 0);
+        bool up = false;
+        Vector3 otherPosU = b.transform.position + new Vector3(0, spriteWidth, 0);
+        bool down = false;
+        Vector3 otherPosD = b.transform.position + new Vector3(0, -spriteWidth, 0);
 
         foreach (var t in tilemaps)
         {
-            Vector3 otherPos = b.transform.position + new Vector3(spriteWidth, 0, 0);
-            Vector3Int cellPos = t.WorldToCell(otherPos);
-            force += t.HasTile(cellPos) ? (otherPos - b.transform.position).normalized : Vector3.zero;
+            Vector3Int cellPos = t.WorldToCell(otherPosR);
+            if (t.HasTile(cellPos))
+            {
+                right = true;
+                break;
+            }
+            
+        }
+
+        foreach (var t in tilemaps)
+        {
+            Vector3Int cellPos = t.WorldToCell(otherPosL);
+            if (t.HasTile(cellPos))
+            {
+                left = true;
+                break;
+            }
+
+        }
+
+        foreach (var t in tilemaps)
+        {
+            Vector3Int cellPos = t.WorldToCell(otherPosU);
+            if (t.HasTile(cellPos))
+            {
+                up = true;
+                break;
+            }
+
+        }
+
+        foreach (var t in tilemaps)
+        {
+            Vector3Int cellPos = t.WorldToCell(otherPosD);
+            if (t.HasTile(cellPos))
+            {
+                down = true;
+                break;
+            }
+
+        }
+
+        if (!right)
+        {
+            force += Vector3.left;
+        }
+        if (!left)
+        {
+            force += Vector3.right;
+        }
+        if (!up)
+        {
+            force += Vector3.down;
+        }
+        if (!down)
+        {
+            force += Vector3.up;
         }
 
         return force;
