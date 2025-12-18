@@ -3,38 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-//public class DijkstraPath
-//{
-//    public List<DijkstraNode> nodes;
-//    public int value;
-
-//    public DijkstraPath(List<DijkstraNode> nodes, int value)
-//    {
-//        this.nodes = nodes;
-//        this.value = value;
-//    }
-//}
-
-//[System.Serializable]
-//public class DijkstraNode
-//{
-//    private string name;
-//    private GameObject gameObject;
-
-//    public DijkstraNode(string name, GameObject gameObject)
-//    {
-//        this.name = name;
-//        this.gameObject = gameObject;
-//    }
-
-//    public override bool Equals(object? obj)
-//    {
-//        return obj is DijkstraNode n && name == n.name && gameObject == n.gameObject;
-//    }
-
-//    public override int GetHashCode() => HashCode.Combine(name, gameObject);
-//}
-
 public class Dijkstra
 {
     public static (Dictionary<GameObject, float> dist, Dictionary<GameObject, GameObject> parent)
@@ -43,7 +11,6 @@ public class Dijkstra
         var dist = new Dictionary<GameObject, float>();
         var parent = new Dictionary<GameObject, GameObject>();
 
-        // initialisation
         foreach (var node in graph.Keys)
         {
             dist[node] = float.MaxValue;
@@ -52,7 +19,7 @@ public class Dijkstra
 
         dist[start] = 0;
 
-        // SortedSet pour simuler un tas
+        // SortedSet to simulate tas
         var pq = new SortedSet<(float dist, GameObject node)>(Comparer<(float, GameObject)>.Create((a, b) =>
         {
             int cmp = a.Item1.CompareTo(b.Item1);
@@ -84,7 +51,6 @@ public class Dijkstra
 
                 if (newDist < dist[neighbor])
                 {
-                    // supprime l'ancien si présent
                     pq.Remove((dist[neighbor], neighbor));
 
                     dist[neighbor] = newDist;

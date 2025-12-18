@@ -97,44 +97,62 @@ public class GameManager : MonoBehaviour
         foreach (var s in spawns)
         {
             var (_, parent) = Dijkstra.Compute(graph, s.gameObject);
+            var pathAI = Dijkstra.GetPath(parent, endNode);
+            pathAI.RemoveAt(0);
 
-            GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-            if (!unit.TryGetComponent(out AI unitScript))
+            // ---- for path finding algos
+
+            for (int i = 0; i < s.unitsCount; i++)
             {
-                Debug.LogError($"{unitAIPrefab} doesn't have a AI script.");
-                return;
-            }
-            unit.transform.SetParent(unitsParent.transform);
-
-            var path = Dijkstra.GetPath(parent, endNode);
-            path.RemoveAt(0);
-            unitScript.SetTilemaps(tilemaps);
-            unitScript.SetTargets(path);
-
-            //leaderPerSpawn[s] = unit;
-
-            List<GameObject> boids = new();
-
-            for (int i = 0; i < s.unitsCount - 1; i++)
-            {
-                GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
-
-                if (!unitBoid.TryGetComponent(out Boid boidScript))
+                GameObject unitAI = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+                if (!unitAI.TryGetComponent(out AI unitAIScript))
                 {
-                    Debug.LogError($"{unitBoidPrefab} doesn't have a Boid script.");
+                    Debug.LogError($"{unitAIPrefab} doesn't have a AI script.");
                     return;
                 }
-
-                boidScript.leader = unit.transform;
-                boidScript.velocity = UnityEngine.Random.insideUnitCircle;
-
-                //AddBoid(s, unitBoid);
-                boids.Add(unitBoid);
-                BoidManager.Instance.boids.Add(boidScript);
+                unitAI.transform.SetParent(unitsParent.transform);
+                unitAIScript.SetTilemaps(tilemaps);
+                unitAIScript.SetTargets(pathAI);
             }
 
+            // ---- for boids :
+
+            //GameObject unit = Instantiate(unitAIPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+            //if (!unit.TryGetComponent(out AI unitScript))
+            //{
+            //    Debug.LogError($"{unitAIPrefab} doesn't have a AI script.");
+            //    return;
+            //}
+            //unit.transform.SetParent(unitsParent.transform);
+
+            //var path = Dijkstra.GetPath(parent, endNode);
+            //path.RemoveAt(0);
+            //unitScript.SetTilemaps(tilemaps);
+            //unitScript.SetTargets(path);
+
+
+            //List<GameObject> boids = new();
+
+            //for (int i = 0; i < s.unitsCount - 1; i++)
+            //{
+            //    GameObject unitBoid = Instantiate(unitBoidPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+
+            //    if (!unitBoid.TryGetComponent(out Boid boidScript))
+            //    {
+            //        Debug.LogError($"{unitBoidPrefab} doesn't have a Boid script.");
+            //        return;
+            //    }
+
+            //    boidScript.leader = unit.transform;
+            //    boidScript.velocity = UnityEngine.Random.insideUnitCircle;
+
+            //    //AddBoid(s, unitBoid);
+            //    boids.Add(unitBoid);
+            //    BoidManager.Instance.boids.Add(boidScript);
+            //}
+
             // TODO: not secure
-            unit.GetComponent<AI>().boids = boids;
+            //unit.GetComponent<AI>().boids = boids;
         }
     }
 

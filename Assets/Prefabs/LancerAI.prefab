@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1483275970672216752}
   - component: {fileID: 6474698426169620675}
+  - component: {fileID: 7519417532677138044}
+  - component: {fileID: 2149291730678714623}
   m_Layer: 0
   m_Name: LancerAI
   m_TagString: Untagged
@@ -47,6 +49,59 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageDealt: 5
   delayBetweenAttacks: 1
+  speed: 2
+  boids: []
+--- !u!70 &7519417532677138044
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224827079133704031}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: -0.03534931, y: 0.48546392}
+  m_Size: {x: 0.8629197, y: 1.2168092}
+  m_Direction: 0
+--- !u!114 &2149291730678714623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6224827079133704031}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87c99c6a2e22cb345aacfeb821e31154, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 20
+  deadSkull: {fileID: 5915301953915446576, guid: 6f76b9027e7bbd34dad66ea049e76feb, type: 3}
 --- !u!1001 &258052368085062610
 PrefabInstance:
   m_ObjectHideFlags: 0

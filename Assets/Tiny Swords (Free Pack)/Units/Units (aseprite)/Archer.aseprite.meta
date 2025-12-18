@@ -2,7 +2,27 @@ fileFormatVersion: 2
 guid: 489521cabb19c57468fde715710ded80
 ScriptedImporter:
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Arrow
+    second: {fileID: 7400000, guid: a3795e08966c6f149ba0f4cac1bb6e9f, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Idle
+    second: {fileID: 7400000, guid: 3fa11b43324587a48ad709f16acfe12c, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: 'Run '
+    second: {fileID: 7400000, guid: bac225aee6745c84599abf0a1911da5f, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Shoot
+    second: {fileID: 7400000, guid: ba63ec692da600549b05b79eb5ad8365, type: 2}
   serializedVersion: 2
   userData: 
   assetBundleName: 
@@ -98,7 +118,7 @@ ScriptedImporter:
     addSortingGroup: 1
     addShadowCasters: 0
   importFileNodeState: 1
-  platformSettingsDirtyTick: 638986511368374450
+  platformSettingsDirtyTick: 639011730708409542
   textureAssetName: 
   singleSpriteImportData:
   - name: 
