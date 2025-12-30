@@ -42,23 +42,23 @@ public class Boid : MonoBehaviour
 
         if (isMoving)
         {
-            Vector3 accel = Vector3.zero;
+            // Vector3 accel = Vector3.zero;
 
-            accel += (BoidManager.Instance.Cohesion(this) * BoidManager.Instance.cohesionWeight);
+            // accel += (BoidManager.Instance.Cohesion(this) * BoidManager.Instance.cohesionWeight);
 
-            accel += (BoidManager.Instance.Separation(this, target) * BoidManager.Instance.separationWeight);
+            // accel += (BoidManager.Instance.Separation(this, target) * BoidManager.Instance.separationWeight);
 
-            accel += (BoidManager.Instance.Alignment(this) * BoidManager.Instance.alignmentWeight);
+            // accel += (BoidManager.Instance.Alignment(this) * BoidManager.Instance.alignmentWeight);
 
-            accel += (BoidManager.Instance.LeaderInfluence(this, target) * BoidManager.Instance.leaderInfluence);
+            // accel += (BoidManager.Instance.LeaderInfluence(this, target) * BoidManager.Instance.leaderInfluence);
 
-            accel += (BoidManager.Instance.WallInfluence(this) * BoidManager.Instance.wallInfluence);
-            Debug.Log("wallInf:  " + BoidManager.Instance.WallInfluence(this));
+            // accel += (BoidManager.Instance.WallInfluence(this) * BoidManager.Instance.wallInfluence);
+            // Debug.Log("wallInf:  " + BoidManager.Instance.WallInfluence(this));
 
-            velocity += accel * Time.deltaTime;
-            velocity = (Vector2)velocity.normalized * speed;
+            // velocity += accel * Time.deltaTime;
+            // velocity = (Vector2)velocity.normalized * speed;
 
-            transform.position += velocity * Time.deltaTime;
+            // transform.position += velocity * Time.deltaTime;
         }
     }
 

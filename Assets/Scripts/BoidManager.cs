@@ -12,20 +12,21 @@ public class BoidManager : MonoBehaviour
 
     public float spriteWidth = 0.5f;
 
-    public float cohesionWeight = 1f;
-    public float separationWeight = 1f;
-    public float alignmentWeight = 1f;
+    public float cohesionWeight = 10f;
+    public float separationWeight = 10000f;
+    public float alignmentWeight = 10f;
     public float leaderInfluence = 100f;
-    public float wallInfluence = 100f;
+    public float wallInfluence = 100000f;
 
-    public float cohesionDistance = 1f;
+    public float cohesionDistance = 10f;
     public float separationDistance = 1f;
-    public float alignmentDistance = 1f;
+    public float alignmentDistance = 2f;
     public float wallDistance = 1f;
 
     public float speed = 2f;
 
-    public List<Boid> boids = new List<Boid>();
+    // public List<Boid> boids = new List<Boid>();
+    public List<UnitManager> boids = new();
 
     void Awake()
     {
@@ -46,7 +47,7 @@ public class BoidManager : MonoBehaviour
         return Mathf.Sqrt(distX * distX + distY * distY);
     }
 
-    public Vector3 Cohesion(Boid b)
+    public Vector3 Cohesion(UnitManager b)
     {
         Vector3 center = Vector3.zero;
         int count = 0;
@@ -67,7 +68,7 @@ public class BoidManager : MonoBehaviour
         return (center - b.transform.position).normalized;
     }
 
-    public Vector3 Separation(Boid b, Transform leader)
+    public Vector3 Separation(UnitManager b, Transform leader)
     {
         Vector3 force = Vector3.zero;
 
@@ -87,7 +88,7 @@ public class BoidManager : MonoBehaviour
         return force;
     }
 
-    public Vector3 Alignment(Boid b)
+    public Vector3 Alignment(UnitManager b)
     {
         Vector3 avgDir = Vector3.zero;
         int count = 0;
@@ -97,7 +98,7 @@ public class BoidManager : MonoBehaviour
             if (other == b) continue;
             if (Distance(other.transform.position, b.transform.position) < alignmentDistance)
             {
-                avgDir += other.velocity;
+                avgDir += other.boidVelocity;
                 count++;
             }
         }
@@ -107,14 +108,14 @@ public class BoidManager : MonoBehaviour
         return avgDir.normalized;
     }
 
-    public Vector3 LeaderInfluence(Boid b, Transform leader)
+    public Vector3 LeaderInfluence(UnitManager b, Transform leader)
     {
         Vector3 force = (leader.position - b.transform.position).normalized;
 
         return force;
     }
 
-    public Vector3 WallInfluence(Boid b)
+    public Vector3 WallInfluence(UnitManager b)
     {
         Vector3 force = new();
 

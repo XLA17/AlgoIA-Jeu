@@ -374,20 +374,13 @@ MonoBehaviour:
     unitsCount: 0
     unitsCount_UI: {fileID: 721824426}
   unitsParent: {fileID: 1392243675}
-  unitAIPrefab: {fileID: 6224827079133704031, guid: 8f9d863714e93d641a0a11136a9cf6b8, type: 3}
-  unitBoidPrefab: {fileID: 6224827079133704031, guid: be8e42060a0552a40b9c2298f089f7fa, type: 3}
+  unitPrefab: {fileID: 6224827079133704031, guid: 8f2530d0858694d4d9bb57db414ec617, type: 3}
   tilemaps:
   - {fileID: 1732411365}
   - {fileID: 211628653}
   unitsCount_UI: {fileID: 1973159922}
   canva_UI: {fileID: 1386364288}
   unitsCount: 10
-  cohesionWeight: 1
-  separationWeight: 1
-  alignmentWeight: 1
-  leaderInfluence: 1000
-  neighborDistance: 1
-  separationDistance: 1
 --- !u!4 &143531687
 Transform:
   m_ObjectHideFlags: 0
@@ -80092,9 +80085,9 @@ MonoBehaviour:
   - {fileID: 1732411365}
   - {fileID: 211628653}
   spriteWidth: 0.4
-  cohesionWeight: 0
+  cohesionWeight: 10
   separationWeight: 10000
-  alignmentWeight: 100
+  alignmentWeight: 10
   leaderInfluence: 100
   wallInfluence: 10000
   cohesionDistance: 15

@@ -38,13 +38,13 @@ public class GameManager : MonoBehaviour
     private int remainingUnits;
 
     //boids
-    public float cohesionWeight = 1f;
-    public float separationWeight = 1f;
-    public float alignmentWeight = 1f;
-    public float leaderInfluence = 1000f;
+    // public float cohesionWeight = 1f;
+    // public float separationWeight = 1f;
+    // public float alignmentWeight = 1f;
+    // public float leaderInfluence = 1000f;
 
-    public float neighborDistance = 1f;
-    public float separationDistance = 1f;
+    // public float neighborDistance = 1f;
+    // public float separationDistance = 1f;
 
     // TODO: update class Spawn with these two variables
     private Dictionary<Spawn, GameObject> leaderPerSpawn;
@@ -108,7 +108,17 @@ public class GameManager : MonoBehaviour
 
             // ---- better
 
-            for (int i = 0; i < s.unitsCount; i++)
+            GameObject AIUnit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
+            if (!AIUnit.TryGetComponent(out UnitManager AIUnitScript))
+            {
+                Debug.LogError($"{AIUnit} doesn't have a UnitManager script.");
+                return;
+            }
+            AIUnit.transform.SetParent(unitsParent.transform);
+            BoidManager.Instance.boids.Add(AIUnitScript);
+
+            List<GameObject> boids = new();
+            for (int i = 0; i < s.unitsCount - 1; i++)
             {
                 GameObject unit = Instantiate(unitPrefab, s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2, Quaternion.identity);
                 if (!unit.TryGetComponent(out UnitManager unitScript))
@@ -118,16 +128,12 @@ public class GameManager : MonoBehaviour
                 }
                 unit.transform.SetParent(unitsParent.transform);
 
-                if (i == 0)
-                {
-                    unitScript.InitializeAI(pathAI, tilemaps);
-                }
-                else
-                {
-                    unitScript.InitializeBoid();
-                }
+                unitScript.InitializeBoid(pathAI, AIUnit);
+                boids.Add(unit);
+                BoidManager.Instance.boids.Add(unitScript);
             }
 
+            AIUnitScript.InitializeAI(pathAI, tilemaps, boids);
 
             // ---- for path finding algos
 
@@ -217,7 +223,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < list.Count - 1; i++)
         {
-            // Vérifiez que parent n'est pas null
+            // Vï¿½rifiez que parent n'est pas null
             if (!list[i].parent.HasValue || !list[i + 1].parent.HasValue)
                 continue;
 
