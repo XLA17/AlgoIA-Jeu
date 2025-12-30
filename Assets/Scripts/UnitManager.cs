@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -18,6 +19,7 @@ public class UnitManager : MonoBehaviour
     private GameObject m_currentTarget;
     private bool m_canAttack;
     public Vector3 boidVelocity;
+    public GameObject boidLeader;
 
     private Animator m_animator;
     private LancerAnimationHandler animationHandler; // TODO: remove
@@ -55,6 +57,8 @@ public class UnitManager : MonoBehaviour
                 return;
 
             case State.Move:
+                Fct();
+
                 if (m_isBoid)
                 {
                     MoveBoid();
@@ -75,6 +79,8 @@ public class UnitManager : MonoBehaviour
                     return;
                 }
 
+                Fct();
+
                 Attack(m_currentTarget);
 
                 return;
@@ -94,15 +100,15 @@ public class UnitManager : MonoBehaviour
         m_boids = new(boids);
     }
 
-    public void InitializeBoid(List<GameObject> towerTargets, GameObject target)
+    public void InitializeBoid(List<GameObject> towerTargets, GameObject leader)
     {
         Debug.Log("Boid initialization");
         m_isBoid = true;
         m_towerTargets = new List<GameObject>(towerTargets);
         m_currentState = State.Move;
         m_animator.SetBool("isMoving", true);
-        m_currentTarget = target;
-        // SetCurrentTarget();
+        boidLeader = leader;
+        m_currentTarget = boidLeader;
         m_boids = new();
     }
 
@@ -138,37 +144,45 @@ public class UnitManager : MonoBehaviour
         transform.position += boidVelocity * Time.deltaTime;
     }
 
+    public void Fct()
+    {
+        if (!m_currentTarget.TryGetComponent(out Defense defenseScript))
+        {
+            Debug.Log("not defense");
+            return;
+        }
+
+        if (defenseScript.IsDead())
+        {
+            if (m_isBoid)
+            {
+                if (!boidLeader.TryGetComponent(out UnitManager unitManager)) return;
+                if (unitManager.m_currentTarget == null)
+                {
+                    m_currentState = State.Idle;
+                    m_animator.SetBool("isMoving", false);
+                    m_currentTarget = null;
+                }
+                else
+                {
+                    m_currentState = State.Move;
+                    m_animator.SetBool("isMoving", true);
+                    m_currentTarget = boidLeader;   
+                }
+            }
+            else
+            {
+                SetCurrentTarget();
+            }
+        }
+    }
+
     private void Attack(GameObject defense)
     {
         if (!defense.TryGetComponent(out Defense defenseScript))
         {
             Debug.Log("defense dont");
             return;
-        }
-
-        if (defenseScript.IsDead() && !m_isBoid)
-        {
-            SetCurrentTarget();
-            if (m_currentTarget == null)
-            {
-                foreach (var boid in m_boids)
-                {
-                    if (!boid.TryGetComponent(out UnitManager unitManager)) return;
-                    unitManager.m_currentTarget = null;
-                    unitManager.m_currentState = State.Idle;
-                    m_animator.SetBool("isMoving", false);
-                }
-            }
-            else
-            {
-                foreach (var boid in m_boids)
-                {
-                    if (!boid.TryGetComponent(out UnitManager unitManager)) return;
-                    unitManager.m_currentTarget = this.gameObject;
-                    unitManager.m_currentState = State.Move;
-                    m_animator.SetBool("isMoving", true);
-                }
-            }
         }
 
         if (m_canAttack)
