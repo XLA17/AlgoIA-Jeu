@@ -57,7 +57,8 @@ public class UnitManager : MonoBehaviour
                 return;
 
             case State.Move:
-                Fct();
+                CheckTarget();
+                CheckLeader();
 
                 if (m_isBoid)
                 {
@@ -72,14 +73,15 @@ public class UnitManager : MonoBehaviour
                 return;
 
             case State.Attack:
+                CheckTarget();
+                CheckLeader();
+                
                 if (m_currentTarget == null)
                 {
                     m_currentState = State.Idle;
                     m_animator.SetBool("isMoving", false);
                     return;
                 }
-
-                Fct();
 
                 Attack(m_currentTarget);
 
@@ -144,20 +146,16 @@ public class UnitManager : MonoBehaviour
         transform.position += boidVelocity * Time.deltaTime;
     }
 
-    public void Fct()
+    public void CheckTarget()
     {
-        if (!m_currentTarget.TryGetComponent(out Defense defenseScript))
-        {
-            Debug.Log("not defense");
-            return;
-        }
+        if (!m_currentTarget.TryGetComponent(out Defense defenseScript)) return;
 
         if (defenseScript.IsDead())
         {
             if (m_isBoid)
             {
-                if (!boidLeader.TryGetComponent(out UnitManager unitManager)) return;
-                if (unitManager.m_currentTarget == null)
+                if (!boidLeader.TryGetComponent(out UnitManager unitManagerLeader)) return;
+                if (unitManagerLeader.m_currentTarget == null)
                 {
                     m_currentState = State.Idle;
                     m_animator.SetBool("isMoving", false);
@@ -174,6 +172,19 @@ public class UnitManager : MonoBehaviour
             {
                 SetCurrentTarget();
             }
+        }
+    }
+
+    public void CheckLeader()
+    {
+        if (!m_isBoid) return;
+        if (!boidLeader.TryGetComponent(out UnitManager unitManager)) return;
+
+        if (unitManager.m_currentTarget == null)
+        {
+            m_currentState = State.Idle;
+            m_animator.SetBool("isMoving", false);
+            m_currentTarget = null;
         }
     }
 
