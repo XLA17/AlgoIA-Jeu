@@ -14,7 +14,7 @@ public class UnitManager : MonoBehaviour
     private List<GameObject> m_towerTargets;
     private List<TileInfos> m_tilesToCross;
 
-    private State m_currentState = State.Idle;
+    private State m_currentState = State.Move;
     private bool m_isBoid;
     private GameObject m_currentTarget;
     private bool m_canAttack;
@@ -190,17 +190,11 @@ public class UnitManager : MonoBehaviour
 
     private void Attack(GameObject defense)
     {
-        if (!defense.TryGetComponent(out Defense defenseScript))
-        {
-            Debug.Log("defense dont");
-            return;
-        }
+        if (!defense.TryGetComponent(out Defense defenseScript)) return;
 
         if (m_canAttack)
         {
-            Debug.Log("--- can attack is true");
             if (!transform.GetChild(0).TryGetComponent(out LancerAnimationHandler lancerAnimationHandler)) return;
-            Debug.Log("----- can attack is true 2222222");
             lancerAnimationHandler.attackAnimationIsPlaying = true;
             m_animator.Play("Attack");
             m_canAttack = false;
@@ -216,13 +210,11 @@ public class UnitManager : MonoBehaviour
             m_animator.SetBool("isMoving", true);
             m_currentTarget = m_towerTargets[0];
             m_towerTargets.RemoveAt(0);
-            Debug.Log($"change target : {m_currentTarget}");
 
             if (!m_isBoid) CalculateAStar();
         }
         else
         {
-            Debug.Log("no more targets");
             m_currentState = State.Idle;
             m_currentTarget = null;
         }
@@ -231,11 +223,7 @@ public class UnitManager : MonoBehaviour
     private void CalculateAStar()
     {
         Debug.Log("test---");
-        Debug.Log(m_tilemaps);
-        Debug.Log(m_tilemaps.Length);
         m_tilesToCross = AStar.Compute(m_tilemaps, Vector2Int.FloorToInt(transform.position), (Vector2)m_currentTarget.transform.position);
-        Debug.Log(m_tilesToCross.Count);
-        Debug.Log("remove in CalculateAStar astar");
         m_tilesToCross.RemoveAt(0);
     }
 
@@ -243,8 +231,6 @@ public class UnitManager : MonoBehaviour
     {
         if (collision.transform.gameObject == m_currentTarget && m_currentTarget.TryGetComponent(out Defense _))
         {
-            Debug.Log("good collision");
-
             if (!m_isBoid)
             {
                 foreach (var boid in m_boids)
@@ -256,6 +242,19 @@ public class UnitManager : MonoBehaviour
 
             m_currentState = State.Attack;
             m_animator.SetBool("isMoving", false);
+        }
+    }
+
+    public void Restart(List<GameObject> newTowerTargets)
+    {
+        m_currentState = State.Move;
+        if (m_isBoid)
+        {
+            InitializeBoid(newTowerTargets, boidLeader);
+        }
+        else
+        {
+            InitializeAI(newTowerTargets, m_tilemaps, m_boids);
         }
     }
 }

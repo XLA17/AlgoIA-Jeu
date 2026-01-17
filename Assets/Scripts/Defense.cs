@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Defense : MonoBehaviour
 {
+    [SerializeField] private bool isFinalCastle = false;
     [SerializeField] private int maxHealth;
     [SerializeField] private TextMeshPro health_UI;
     [SerializeField] private GameObject deadTowerPrefab;
@@ -32,6 +33,11 @@ public class Defense : MonoBehaviour
         health -= damage;
         if (health <= 0)
         {
+            if (isFinalCastle && GameManager.Instance.geneticExecution)
+            {
+                GameManager.Instance.Restart();
+                return;
+            }
             health = 0;
             isDead = true;
 
@@ -45,5 +51,13 @@ public class Defense : MonoBehaviour
     public bool IsDead()
     {
         return isDead;
+    }
+
+    public void Restart()
+    {
+        isDead = false;
+        health = maxHealth;
+        health_UI.text = health.ToString();
+        gameObject.SetActive(true);        
     }
 }

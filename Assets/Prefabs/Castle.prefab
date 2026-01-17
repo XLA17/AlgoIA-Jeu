@@ -384,6 +384,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0786d4817a4db49499204d260e84257e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFinalCastle: 0
   maxHealth: 0
   health_UI: {fileID: 4714426024679061472}
   deadTowerPrefab: {fileID: 8002271587393444162, guid: 6b6fb2bfdfad80243addc1044966d2f5, type: 3}

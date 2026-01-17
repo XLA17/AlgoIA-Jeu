@@ -343,6 +343,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32171a8f120ec74458d6ac09acce15be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  geneticExecution: 1
+  cohesionWeightMin: 0
+  cohesionWeightMax: 1000
+  separationWeightMin: 10000
+  separationWeightMax: 10000
+  alignmentWeightMin: 0
+  alignmentWeightMax: 1000
+  leaderInfluenceMin: 0
+  leaderInfluenceMax: 1000
+  wallInfluenceMin: 10000
+  wallInfluenceMax: 10000
   nodes:
   - {fileID: 1801992595}
   - {fileID: 1193549383}
@@ -98827,22 +98838,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2010280617}
     m_Modifications:
-    - target: {fileID: 4137695823060068924, guid: d513b767a897d6747843789c6234f936, type: 3}
-      propertyPath: value
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4137695823060068924, guid: d513b767a897d6747843789c6234f936, type: 3}
-      propertyPath: nextTowers.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4137695823060068924, guid: d513b767a897d6747843789c6234f936, type: 3}
-      propertyPath: 'nextTowers.Array.data[0]'
-      value: 
-      objectReference: {fileID: 432283884}
-    - target: {fileID: 4137695823060068924, guid: d513b767a897d6747843789c6234f936, type: 3}
-      propertyPath: 'nextTowers.Array.data[1]'
-      value: 
-      objectReference: {fileID: 212215022}
     - target: {fileID: 4421301976112230593, guid: d513b767a897d6747843789c6234f936, type: 3}
       propertyPath: m_Name
       value: Castle
@@ -98850,6 +98845,10 @@ PrefabInstance:
     - target: {fileID: 5922897949857009844, guid: d513b767a897d6747843789c6234f936, type: 3}
       propertyPath: maxHealth
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5922897949857009844, guid: d513b767a897d6747843789c6234f936, type: 3}
+      propertyPath: isFinalCastle
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6419724066065303650, guid: d513b767a897d6747843789c6234f936, type: 3}
       propertyPath: m_LocalPosition.x
@@ -98890,10 +98889,6 @@ PrefabInstance:
     - target: {fileID: 6419724066065303650, guid: d513b767a897d6747843789c6234f936, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7035874566013448455, guid: d513b767a897d6747843789c6234f936, type: 3}
-      propertyPath: m_Mesh
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

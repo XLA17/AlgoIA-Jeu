@@ -17,6 +17,20 @@ public class GameManager : MonoBehaviour
         public TextMeshProUGUI unitsCount_UI;
     }
 
+    public bool geneticExecution = false;
+    [SerializeField] private float cohesionWeightMin;
+    [SerializeField] private float cohesionWeightMax;
+    [SerializeField] private float separationWeightMin;
+    [SerializeField] private float separationWeightMax;
+    [SerializeField] private float alignmentWeightMin;
+    [SerializeField] private float alignmentWeightMax;
+    [SerializeField] private float leaderInfluenceMin;
+    [SerializeField] private float leaderInfluenceMax;
+    [SerializeField] private float wallInfluenceMin;
+    [SerializeField] private float wallInfluenceMax;
+
+    [Space]
+
     [SerializeField] private GameObject[] nodes;
     [SerializeField] private GameObject endNode;
     [SerializeField] private Spawn[] spawns;
@@ -50,6 +64,8 @@ public class GameManager : MonoBehaviour
     private Dictionary<Spawn, GameObject> leaderPerSpawn;
     private Dictionary<Spawn, List<GameObject>> boidsPerSpawn;
 
+    private List<GameObject> units;
+
     void Awake()
     {
         if (Instance == null)
@@ -64,6 +80,28 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        if (geneticExecution)
+        {
+            Time.timeScale = 5f;
+            Spawn s = spawns[0];
+            remainingUnits = unitsCount;
+            for (int i = 0; i < unitsCount; i++)
+            {
+                AddUnitToSpawn(s.gameObject);
+            }
+            BoidManager.Instance.cohesionWeight = UnityEngine.Random.Range(cohesionWeightMin, cohesionWeightMax);
+            BoidManager.Instance.separationWeight = UnityEngine.Random.Range(separationWeightMin, separationWeightMax);
+            BoidManager.Instance.alignmentWeight = UnityEngine.Random.Range(alignmentWeightMin, alignmentWeightMax);
+            BoidManager.Instance.leaderInfluence = UnityEngine.Random.Range(leaderInfluenceMin, leaderInfluenceMax);
+            BoidManager.Instance.wallInfluence = UnityEngine.Random.Range(wallInfluenceMin, wallInfluenceMax);
+            remainingUnits = unitsCount;
+            units = new();
+            boidsPerSpawn = new();
+            leaderPerSpawn = new(); 
+            StartGame();
+            return;
+        }
+
         unitsCount_UI.text = unitsCount.ToString() + "/" + unitsCount.ToString();
         remainingUnits = unitsCount;
 
@@ -114,6 +152,7 @@ public class GameManager : MonoBehaviour
                 Debug.LogError($"{AIUnit} doesn't have a UnitManager script.");
                 return;
             }
+            units.Add(AIUnit);
             AIUnit.transform.SetParent(unitsParent.transform);
             BoidManager.Instance.boids.Add(AIUnitScript);
 
@@ -126,6 +165,7 @@ public class GameManager : MonoBehaviour
                     Debug.LogError($"{unit} doesn't have a UnitManager script.");
                     return;
                 }
+                units.Add(unit);
                 unit.transform.SetParent(unitsParent.transform);
 
                 unitScript.InitializeBoid(pathAI, AIUnit);
@@ -181,6 +221,32 @@ public class GameManager : MonoBehaviour
 
             ////TODO: not secure
             //unit.GetComponent<AI>().boids = boids;
+        }
+    }
+
+    public void Restart()
+    {
+        int totalUnits = 0;
+        foreach (var s in spawns)
+        {
+            var (_, parent) = Dijkstra.Compute(graph, s.gameObject);
+            var pathAI = Dijkstra.GetPath(parent, endNode);
+            pathAI.RemoveAt(0);
+
+            for (int i = 0; i < s.unitsCount; i++)
+            {
+                units[totalUnits + i].transform.position = s.gameObject.transform.position + (Vector3)UnityEngine.Random.insideUnitCircle * 2;
+                if (!units[totalUnits + i].TryGetComponent(out UnitManager unitScript)) continue;
+                unitScript.Restart(pathAI);
+            }
+            totalUnits += s.unitsCount;
+        }
+           
+        foreach (GameObject node in nodes)
+        {
+            if (!node.TryGetComponent(out Defense defenseScript)) continue;
+
+            defenseScript.Restart();
         }
     }
 
