@@ -7,6 +7,5 @@ public class LancerAnimationHandler : MonoBehaviour
     public void AttackAnimationFinished()
     {
         attackAnimationIsPlaying = false;
-        Debug.Log("animation finished");
     }
 }

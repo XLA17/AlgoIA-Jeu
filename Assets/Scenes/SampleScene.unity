@@ -344,16 +344,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   geneticExecution: 1
-  cohesionWeightMin: 0
-  cohesionWeightMax: 1000
-  separationWeightMin: 10000
-  separationWeightMax: 10000
-  alignmentWeightMin: 0
-  alignmentWeightMax: 1000
-  leaderInfluenceMin: 0
-  leaderInfluenceMax: 1000
-  wallInfluenceMin: 10000
-  wallInfluenceMax: 10000
   nodes:
   - {fileID: 1801992595}
   - {fileID: 1193549383}
@@ -80097,10 +80087,10 @@ MonoBehaviour:
   - {fileID: 211628653}
   spriteWidth: 0.4
   cohesionWeight: 10
-  separationWeight: 10000
+  separationWeight: 100000
   alignmentWeight: 10
   leaderInfluence: 100
-  wallInfluence: 10000
+  wallInfluence: 100000
   cohesionDistance: 15
   separationDistance: 0.5
   alignmentDistance: 5

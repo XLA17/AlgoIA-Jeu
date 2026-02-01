@@ -1,11 +1,21 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
+public class Evaluation
+{
+    public BoidGenome genome;
+    public float evaluation;
+
+    public Evaluation(BoidGenome genome, float evaluation)
+    {
+        this.genome = genome;
+        this.evaluation = evaluation;
+    }
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -18,16 +28,6 @@ public class GameManager : MonoBehaviour
     }
 
     public bool geneticExecution = false;
-    [SerializeField] private float cohesionWeightMin;
-    [SerializeField] private float cohesionWeightMax;
-    [SerializeField] private float separationWeightMin;
-    [SerializeField] private float separationWeightMax;
-    [SerializeField] private float alignmentWeightMin;
-    [SerializeField] private float alignmentWeightMax;
-    [SerializeField] private float leaderInfluenceMin;
-    [SerializeField] private float leaderInfluenceMax;
-    [SerializeField] private float wallInfluenceMin;
-    [SerializeField] private float wallInfluenceMax;
 
     [Space]
 
@@ -35,8 +35,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject endNode;
     [SerializeField] private Spawn[] spawns;
     [SerializeField] private GameObject unitsParent;
-    //[SerializeField] private GameObject unitAIPrefab;
-    //[SerializeField] private GameObject unitBoidPrefab;
     [SerializeField] private GameObject unitPrefab;
     [SerializeField] private Tilemap[] tilemaps;
     [SerializeField] private TextMeshProUGUI unitsCount_UI;
@@ -51,20 +49,14 @@ public class GameManager : MonoBehaviour
 
     private int remainingUnits;
 
-    //boids
-    // public float cohesionWeight = 1f;
-    // public float separationWeight = 1f;
-    // public float alignmentWeight = 1f;
-    // public float leaderInfluence = 1000f;
-
-    // public float neighborDistance = 1f;
-    // public float separationDistance = 1f;
-
-    // TODO: update class Spawn with these two variables
     private Dictionary<Spawn, GameObject> leaderPerSpawn;
     private Dictionary<Spawn, List<GameObject>> boidsPerSpawn;
 
     private List<GameObject> units;
+
+    private int cycle = 0;
+    private int epoch = 1;
+    private List<Evaluation> evaluations;
 
     void Awake()
     {
@@ -82,22 +74,24 @@ public class GameManager : MonoBehaviour
     {
         if (geneticExecution)
         {
-            Time.timeScale = 5f;
+            Time.timeScale = 20f;
             Spawn s = spawns[0];
             remainingUnits = unitsCount;
             for (int i = 0; i < unitsCount; i++)
             {
                 AddUnitToSpawn(s.gameObject);
             }
-            BoidManager.Instance.cohesionWeight = UnityEngine.Random.Range(cohesionWeightMin, cohesionWeightMax);
-            BoidManager.Instance.separationWeight = UnityEngine.Random.Range(separationWeightMin, separationWeightMax);
-            BoidManager.Instance.alignmentWeight = UnityEngine.Random.Range(alignmentWeightMin, alignmentWeightMax);
-            BoidManager.Instance.leaderInfluence = UnityEngine.Random.Range(leaderInfluenceMin, leaderInfluenceMax);
-            BoidManager.Instance.wallInfluence = UnityEngine.Random.Range(wallInfluenceMin, wallInfluenceMax);
             remainingUnits = unitsCount;
             units = new();
             boidsPerSpawn = new();
-            leaderPerSpawn = new(); 
+            leaderPerSpawn = new();
+            evaluations = new();
+            for (int i = 0; i < 100; i++)
+            {
+                BoidGenome g = Genetic.CreateRandomGenome();
+
+                evaluations.Add(new(g, -1f));
+            }
             StartGame();
             return;
         }
@@ -111,27 +105,24 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        //foreach (var s in spawns)
-        //{
-        //    // TODO: not secure
-        //    if (leaderPerSpawn[s].GetComponent<AI>().currentState == AI.State.Attack)
-        //    {
-        //        foreach (var b in boidsPerSpawn[s])
-        //        {
-        //            b.GetComponent<Boid>().isMoving = false;
-        //        }
-        //    }
-        //}
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     public void StartGame()
     {
+        Debug.Log("test");
         canva_UI.SetActive(false);
 
         list = new List<TileInfos>();
 
         SetGraph();
+
+        // set boid parameters
+        if (geneticExecution)
+        {
+            BoidManager.Instance.cohesionWeight = evaluations[cycle].genome.cohesionWeight;
+            BoidManager.Instance.alignmentWeight = evaluations[cycle].genome.alignmentWeight;
+            BoidManager.Instance.leaderInfluence = evaluations[cycle].genome.leaderInfluence;
+        }
 
         foreach (var s in spawns)
         {
@@ -219,13 +210,40 @@ public class GameManager : MonoBehaviour
             //    BoidManager.Instance.boids.Add(boidScript);
             //}
 
-            ////TODO: not secure
             //unit.GetComponent<AI>().boids = boids;
         }
     }
 
     public void Restart()
     {
+        Evaluate();
+
+        cycle++;
+        if (cycle == 100)
+        {
+            cycle = 10; // back at 10 becaause we keep the 10 best and we don't rerun them
+            epoch++;
+            evaluations.Sort((a, b) => a.evaluation.CompareTo(b.evaluation));
+            Debug.Log("Les 10 meilleurs sont : ");
+            for (int i = 0; i < 10; i++)
+            {
+                Debug.Log("  value : " + evaluations[i].evaluation + " ---- cohesion : " + evaluations[i].genome.cohesionWeight + " ---- alignment : " + evaluations[i].genome.alignmentWeight + " ---- leader : " + evaluations[i].genome.leaderInfluence);
+            }
+
+            for (int i = 0; i < 90; i++)
+            {
+                int r1 = UnityEngine.Random.Range(0, 10);
+                int r2 = UnityEngine.Random.Range(0, 10);
+                BoidGenome g = Genetic.Crossover(evaluations[r1].genome, evaluations[r2].genome);
+                Genetic.Mutate(g);
+                evaluations[cycle + i].genome = g;
+                evaluations[cycle + i].evaluation = -1f;
+            }
+        }
+        BoidManager.Instance.cohesionWeight = evaluations[cycle].genome.cohesionWeight;
+        BoidManager.Instance.alignmentWeight = evaluations[cycle].genome.alignmentWeight;
+        BoidManager.Instance.leaderInfluence = evaluations[cycle].genome.leaderInfluence;
+
         int totalUnits = 0;
         foreach (var s in spawns)
         {
@@ -248,6 +266,19 @@ public class GameManager : MonoBehaviour
 
             defenseScript.Restart();
         }
+    }
+
+    public void Evaluate()
+    {
+        float totDist = 0f;
+        foreach (GameObject unit in units)
+        {
+            totDist += Vector3.Distance(unit.transform.position, endNode.transform.position);
+        }
+
+        Debug.Log("Epoch : " + epoch + " --- Cycle : " + cycle + " --- Evaluation : " + totDist);
+        if (evaluations[cycle].genome.cohesionWeight != BoidManager.Instance.cohesionWeight || evaluations[cycle].genome.alignmentWeight != BoidManager.Instance.alignmentWeight || evaluations[cycle].genome.leaderInfluence != BoidManager.Instance.leaderInfluence) Debug.LogError("Ce ne sont pas les memes valeurs, il y a donc un pb");
+        evaluations[cycle].evaluation = totDist;
     }
 
     //public void AddBoid(Spawn spawner, GameObject boid)

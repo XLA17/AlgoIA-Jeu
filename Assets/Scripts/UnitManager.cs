@@ -94,7 +94,6 @@ public class UnitManager : MonoBehaviour
 
     public void InitializeAI(List<GameObject> towerTargets, Tilemap[] tilemaps, List<GameObject> boids)
     {
-        Debug.Log("AI initialization");
         m_isBoid = false;
         m_towerTargets = new List<GameObject>(towerTargets);
         m_tilemaps = tilemaps;
@@ -104,7 +103,6 @@ public class UnitManager : MonoBehaviour
 
     public void InitializeBoid(List<GameObject> towerTargets, GameObject leader)
     {
-        Debug.Log("Boid initialization");
         m_isBoid = true;
         m_towerTargets = new List<GameObject>(towerTargets);
         m_currentState = State.Move;
@@ -222,7 +220,6 @@ public class UnitManager : MonoBehaviour
 
     private void CalculateAStar()
     {
-        Debug.Log("test---");
         m_tilesToCross = AStar.Compute(m_tilemaps, Vector2Int.FloorToInt(transform.position), (Vector2)m_currentTarget.transform.position);
         m_tilesToCross.RemoveAt(0);
     }
